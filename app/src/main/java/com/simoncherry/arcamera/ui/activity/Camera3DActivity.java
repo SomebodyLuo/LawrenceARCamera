@@ -91,14 +91,11 @@ public class Camera3DActivity extends AppCompatActivity implements FrameCallback
         setContentView(R.layout.activity_cam_3d);
         mTrackText = (TextView) findViewById(R.id.tv_track);
         mActionText = (TextView) findViewById(R.id.tv_action);
-
-        //面具、头盔
         mIvLandmark = (ImageView) findViewById(R.id.iv_landmark);
 
         mRenderSurface = (org.rajawali3d.view.SurfaceView) findViewById(R.id.rajwali_surface);
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(720, 1280);
-
         mISurfaceRenderer = new My3DRenderer(this);
         mRenderSurface.setSurfaceRenderer(mISurfaceRenderer);
         ((View) mRenderSurface).bringToFront();
@@ -119,12 +116,7 @@ public class Camera3DActivity extends AppCompatActivity implements FrameCallback
             mController = new TextureController(mContext);
             // 设置数据源
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //初始化Render：
-                //1. 显示摄像头图像
-                //2. 追踪头部，并返回状态信息
-                //3. 在回调中，根据上面的状态信息控制模型的状态，并渲染
                 mRenderer = new CameraTrackRenderer(mContext, (CameraManager)getSystemService(CAMERA_SERVICE), mController, cameraId);
-
                 ((CameraTrackRenderer) mRenderer).setTrackCallBackListener(new CameraTrackRenderer.TrackCallBackListener() {
                     @Override
                     public void onTrackDetected(STMobileFaceAction[] faceActions, final int orientation, final int value,
@@ -418,15 +410,12 @@ public class Camera3DActivity extends AppCompatActivity implements FrameCallback
         }
         //Log.i(TAG, "rect center: (" + String.valueOf((rect.right + rect.left)/2) + ", " + String.valueOf((rect.bottom + rect.top)/2) + ")");
 
-        // 计算 旋转后的脸的长方形区域的中心点坐标
         float centerX = (rect.right + rect.left)/2.0f;
         float centerY = (rect.bottom + rect.top)/2.0f;
-
         float x = (centerX / PREVIEW_HEIGHT) * 2.0f - 1.0f;
         float y = (centerY / PREVIEW_WIDTH) * 2.0f - 1.0f;
         //float tmp = (eye_dist * 0.000001f - 1115) * 0.04f;   // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25 -> 0 ~ 1
         float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25
-
         tmp = (float) (tmp / Math.cos(Math.PI*yaw/180));  // 根据旋转角度还原两眼距离
         tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1
         float z = tmp * 3.0f + 1.0f;

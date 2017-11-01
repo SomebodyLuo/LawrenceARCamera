@@ -15,7 +15,6 @@ package org.rajawali3d.loader;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.util.Log;
 
 import org.rajawali3d.Object3D;
 import org.rajawali3d.materials.Material;
@@ -44,7 +43,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
-
 
 /**
  * The most important thing is that the model should be triangulated. Rajawali doesn�t accept quads, only tris. In Blender, this is an option you can select in the exporter. In a program like MeshLab, this is done automatically.
@@ -84,7 +82,6 @@ import java.util.StringTokenizer;
  *
  */
 public class LoaderOBJ extends AMeshLoader {
-	private final static String TAG = LoaderOBJ.class.getSimpleName();
     protected final String VERTEX = "v";
     protected final String FACE = "f";
     protected final String TEXCOORD = "vt";
@@ -278,10 +275,8 @@ public class LoaderOBJ extends AMeshLoader {
 					if(mFile != null)
 						matLib.parse(materialLibPath, null, null);
 					else
-						//luoyouren
 						matLib.parse(materialLibPath, mResources.getResourceTypeName(mResourceId), mResources.getResourcePackageName(mResourceId));
 				} else if(type.equals(USE_MATERIAL)) {
-					//luoyouren: obj / MTL 都会标记这个材质名 05___Default
 					currentMaterialName = parts.nextToken();
 					if(currentObjHasFaces) {
 						objIndices.add(currObjIndexData);
@@ -290,7 +285,6 @@ public class LoaderOBJ extends AMeshLoader {
 						addChildSetParent(currentGroup, currObjIndexData.targetObj);
 						currentObjHasFaces = false;
 					}
-					//for ironman_mask: materialName = 05___Default
 					currObjIndexData.materialName = currentMaterialName;
 				}
 			}
@@ -358,20 +352,15 @@ public class LoaderOBJ extends AMeshLoader {
 				aNormals[ni+2] = normals.get(normalIndex + 2);
 			}
 
-			//luoyouren: 组合点信息——坐标、法线坐标、纹理坐标、颜色...
 			oid.targetObj.setData(aVertices, aNormals, aTexCoords, aColors, aIndices, false);
 			try {
-				RajLog.i("targetObj name = " + oid.targetObj.getName() + "; oid.materialName = " + oid.materialName);
-				// 关联模型与材质
 				matLib.setMaterial(oid.targetObj, oid.materialName);
 			} catch(TextureException tme) {
 				throw new ParsingException(tme);
 			}
-
 			if(oid.targetObj.getParent() == null)
 				addChildSetParent(mRootObject, oid.targetObj);
 		}
-
 		for(Object3D group : groups.values()) {
 			if(group.getParent()==null)
 				addChildSetParent(mRootObject, group);
@@ -491,7 +480,7 @@ public class LoaderOBJ extends AMeshLoader {
 		private final String SPECULAR_HIGHLIGHT_TEXTURE = "map_Ns";
 		private final String ALPHA_TEXTURE_1 = "map_d";
 		private final String ALPHA_TEXTURE_2 = "map_Tr";
-		private final String BUMP_TEXTURE = "map_bump";
+		private final String BUMP_TEXTURE = "map_Bump";
 
 		private Stack<MaterialDef> mMaterials;
 		private String mResourcePackage;
@@ -500,7 +489,6 @@ public class LoaderOBJ extends AMeshLoader {
 			mMaterials = new Stack<LoaderOBJ.MaterialDef>();
 		}
 
-		//luoyouren: 解析MTL文件
 		public void parse(String materialLibPath, String resourceType, String resourcePackage) {
 			BufferedReader buffer = null;
 			if(mFile == null) {
@@ -557,21 +545,16 @@ public class LoaderOBJ extends AMeshLoader {
 					} else if(type.equals(ALPHA_1) || type.equals(ALPHA_2)) {
 						matDef.alpha = Float.parseFloat(parts.nextToken());
 					} else if(type.equals(AMBIENT_TEXTURE)) {
-						// 环境纹理贴图
 						matDef.ambientTexture = parts.nextToken();
 					} else if(type.equals(DIFFUSE_TEXTURE)) {
-						// 漫反射纹理贴图
 						matDef.diffuseTexture = parts.nextToken();
 					} else if(type.equals(SPECULAR_COLOR_TEXTURE)) {
-						// 镜面反射颜色纹理贴图
 						matDef.specularColorTexture = parts.nextToken();
 					} else if(type.equals(SPECULAR_HIGHLIGHT_TEXTURE)) {
-						// 为镜面反射指定标量纹理贴图
 						matDef.specularHighlightTexture = parts.nextToken();
 					} else if(type.equals(ALPHA_TEXTURE_1) || type.equals(ALPHA_TEXTURE_2)) {
 						matDef.alphaTexture = parts.nextToken();
 					} else if(type.equals(BUMP_TEXTURE)) {
-						// 为材质指定凹凸纹理贴图（法线纹理）
 						matDef.bumpTexture = parts.nextToken();
 					}
 				}
@@ -582,7 +565,6 @@ public class LoaderOBJ extends AMeshLoader {
 			}
 		}
 
-		//luoyouren: 给模型设置纹理、材质
 		public void setMaterial(Object3D object, String materialName) throws TextureException {
 			if(materialName == null) {
 				RajLog.i(object.getName() + " has no material definition." );
@@ -591,7 +573,6 @@ public class LoaderOBJ extends AMeshLoader {
 
 			MaterialDef matDef = null;
 
-			//luoyouren: 遍历材质库，匹配材质名
 			for(int i=0; i<mMaterials.size(); ++i) {
 				if(mMaterials.get(i).name.equals(materialName))
 				{
@@ -619,29 +600,19 @@ public class LoaderOBJ extends AMeshLoader {
 				SpecularMethod.Phong method = new SpecularMethod.Phong();
 				method.setSpecularColor(matDef.specularColor);
 				method.setShininess(matDef.specularCoefficient);
-				mat.setSpecularMethod(method);	//luoyouren
 			}
 
 			if(hasTexture) {
 				if(mFile == null) {
-					RajLog.i("---------mFile == null---------");
-					//luoyouren: 加载漫反射纹理贴图
 					final String fileNameWithoutExtension = getFileNameWithoutExtension(matDef.diffuseTexture);
-					RajLog.i("Texture file name: " + fileNameWithoutExtension);
 					int id = mResources.getIdentifier(fileNameWithoutExtension, "drawable", mResourcePackage);
 					int etc1Id = mResources.getIdentifier(fileNameWithoutExtension, "raw", mResourcePackage);
 					if(etc1Id!=0) {
 						mat.addTexture(new Texture(object.getName()+fileNameWithoutExtension, new Etc1Texture(object.getName()+etc1Id, etc1Id, id!=0 ? BitmapFactory.decodeResource(mResources, id) : null)));
 					} else if(id!=0) {
-						RajLog.i("---------add diffuse Texture---------; object.getName()" + object.getName() + "； fileNameWithoutExtension = " + fileNameWithoutExtension);
-
-						//luoyouren: 给当前材质，赋予一个纹理贴图
-						Texture tt = new Texture(object.getName()+fileNameWithoutExtension, id);
-//						tt.setInfluence(0.8f);
-						mat.addTexture(tt);
+						mat.addTexture(new Texture(object.getName()+fileNameWithoutExtension, id));
 					}
 				} else {
-					RajLog.i("---------mFile != null---------");
 					String filePath = mFile.getParent() + File.separatorChar + getOnlyFileName(matDef.diffuseTexture);
 					if(filePath.endsWith(".pkm")) {
 						FileInputStream fis = null;
@@ -660,12 +631,10 @@ public class LoaderOBJ extends AMeshLoader {
 						mat.addTexture(new Texture(getFileNameWithoutExtension(matDef.diffuseTexture), BitmapFactory.decodeFile(filePath)));
 					}
 				}
-				mat.setColorInfluence(0.0f);
+				mat.setColorInfluence(0);
 			}
-
 			if(hasBump) {
 				if(mFile == null) {
-					RajLog.i("---------add bump Texture---------; object.getName()" + object.getName() + "； fileNameWithoutExtension = " + getFileNameWithoutExtension(matDef.bumpTexture));
 					int identifier = mResources.getIdentifier(getFileNameWithoutExtension(matDef.bumpTexture), "drawable", mResourcePackage);
 					mat.addTexture(new NormalMapTexture(object.getName() + identifier, identifier));
 				} else {
@@ -673,10 +642,8 @@ public class LoaderOBJ extends AMeshLoader {
 					mat.addTexture(new NormalMapTexture(getOnlyFileName(matDef.bumpTexture), BitmapFactory.decodeFile(filePath)));
 				}
 			}
-
 			if(hasSpecularTexture) {
 				if(mFile == null) {
-					RajLog.i("---------add specular Texture---------; object.getName()" + object.getName() + "； fileNameWithoutExtension = " + getFileNameWithoutExtension(matDef.specularColorTexture));
 					int identifier = mResources.getIdentifier(getFileNameWithoutExtension(matDef.specularColorTexture), "drawable", mResourcePackage);
 					mat.addTexture(new SpecularMapTexture(object.getName() + identifier, identifier));
 				} else {
@@ -684,7 +651,6 @@ public class LoaderOBJ extends AMeshLoader {
 					mat.addTexture(new SpecularMapTexture(getOnlyFileName(matDef.specularColorTexture), BitmapFactory.decodeFile(filePath)));
 				}
 			}
-			RajLog.i("---------object set a material!---------");
 			object.setMaterial(mat);
 			if(matDef!=null && matDef.alpha<1f)
 				object.setTransparent(true);

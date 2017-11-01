@@ -236,14 +236,10 @@ public abstract class AFilter {
      * 启用顶点坐标和纹理坐标进行绘制
      */
     protected void onDraw(){
-        //绘制顶点
         GLES20.glEnableVertexAttribArray(mHPosition);
         GLES20.glVertexAttribPointer(mHPosition, 2, GLES20.GL_FLOAT, false, 0, mVerBuffer);
-
-        //绘制纹理贴图
         GLES20.glEnableVertexAttribArray(mHCoord);
         GLES20.glVertexAttribPointer(mHCoord, 2, GLES20.GL_FLOAT, false, 0, mTexBuffer);
-
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisableVertexAttribArray(mHPosition);
         GLES20.glDisableVertexAttribArray(mHCoord);

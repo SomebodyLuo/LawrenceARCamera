@@ -184,31 +184,9 @@ public class OrnamentFactory {
 
         Ornament.Model ironManTop = new Ornament.Model();
         ironManTop.setName("ironManTop");
-
-//-------------------------------------------------------------------------------------------------------------
-//        ironManTop.setModelResId(R.raw.iron_man_helmet_top_obj);
-//        ironManTop.setScale(0.75f);
-//        ironManTop.setOffset(0, -0.5f, 0);
-//        // for object pick
-//        ironManTop.setNeedObjectPick(true);
-//        ironManTop.setBeforeY(-0.5f);
-//        ironManTop.setAfterY(-0.15f);
-//        ironManTop.setBeforeZ(0);
-//        ironManTop.setAfterZ(0.5f);
-//        ironManTop.setAxisX(1);
-//        ironManTop.setBeforeAngle(0);
-//        ironManTop.setAfterAngle(40);
-//
-//        Ornament.Model ironManBottom = new Ornament.Model();
-//        ironManBottom.setName("ironManBottom");
-//        ironManBottom.setModelResId(R.raw.iron_man_helmet_bottom_obj);
-//        ironManBottom.setScale(0.75f);
-//        ironManBottom.setOffset(0, -0.5f, 0);
-
-//-------------------------------------------------------------------------------------------------------------
-        ironManTop.setModelResId(R.raw.ironman_mask_obj);
-        ironManTop.setScale(1.00f); //*********
-        ironManTop.setOffset(0, -30.5f, -10);
+        ironManTop.setModelResId(R.raw.iron_man_helmet_top_obj);
+        ironManTop.setScale(0.75f);
+        ironManTop.setOffset(0, -0.5f, 0);
         // for object pick
         ironManTop.setNeedObjectPick(true);
         ironManTop.setBeforeY(-0.5f);
@@ -221,10 +199,9 @@ public class OrnamentFactory {
 
         Ornament.Model ironManBottom = new Ornament.Model();
         ironManBottom.setName("ironManBottom");
-        ironManBottom.setModelResId(R.raw.ironman_mask_open_obj);
-        ironManBottom.setScale(1.0f);  //*********
-        ironManBottom.setOffset(0, -30.5f, -10);
-//-------------------------------------------------------------------------------------------------------------
+        ironManBottom.setModelResId(R.raw.iron_man_helmet_bottom_obj);
+        ironManBottom.setScale(0.75f);
+        ironManBottom.setOffset(0, -0.5f, 0);
 
         ornament.setType(Ornament.MODEL_TYPE_STATIC);
         ornament.setImgResId(R.drawable.ic_iron_man);
@@ -492,7 +469,7 @@ public class OrnamentFactory {
         ornaments.add(getMask(R.drawable.average_female, R.drawable.mask_woman, true));
         ornaments.add(getMask(R.drawable.female_virtual_makeup, R.drawable.mask_makeup, false));
         ornaments.add(getMask(R.drawable.lion_texture, R.drawable.mask_lion, false));
-        ornaments.add(getMask(R.drawable.skull_texture, R.drawable.mask_skull, true));
+        ornaments.add(getMask(R.drawable.skull_texture, R.drawable.mask_skull, false));
         return ornaments;
     }
 
@@ -508,7 +485,6 @@ public class OrnamentFactory {
         model.setColor(NO_COLOR);
         model.setNeedSkinColor(needSkinColor);
 
-        //luoyouren: Dynamic 动态模型
         ornament.setType(Ornament.MODEL_TYPE_DYNAMIC);
         ornament.setImgResId(imgResId);
         List<Ornament.Model> modelList = new ArrayList<>();

@@ -20,10 +20,8 @@ public class MaterialFactory {
     public static Material getMaterialById(int id) {
         switch (id) {
             case MATERIAL_SKY_CUBE:
-                // 天空盒材质
                 return getSkyCubeMaterial();
             case MATERIAL_FROST_CUBE:
-                // 森林盒材质
                 return getFrostCubeMaterial();
             default:
                 return new Material();

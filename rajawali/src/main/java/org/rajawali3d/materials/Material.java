@@ -936,8 +936,6 @@ public class Material {
         mTextureList.add(texture);
 
         TextureManager.getInstance().addTexture(texture);
-
-        //luoyouren: 记录谁在用这个纹理
         texture.registerMaterial(this);
 
         mIsDirty = true;

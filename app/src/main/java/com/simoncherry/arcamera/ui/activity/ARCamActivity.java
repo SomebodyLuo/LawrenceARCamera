@@ -78,11 +78,9 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     // 拍照尺寸
     private final static int IMAGE_WIDTH = 720;
     private final static int IMAGE_HEIGHT = 1280;
-
     // 录像尺寸
     private final static int VIDEO_WIDTH = 384;
     private final static int VIDEO_HEIGHT = 640;
-
     // SenseTime人脸检测最大支持的尺寸为 640 x 480
     private final static int PREVIEW_WIDTH = 640;
     private final static int PREVIEW_HEIGHT = 480;
@@ -95,17 +93,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private ARCamPresenter mPresenter;
 
     private RelativeLayout mLayoutRoot;
-
     // 用于渲染相机预览画面
     private SurfaceView mSurfaceView;
-
     // 用于显示人脸检测参数
     private TextView mTrackText, mActionText;
-
     // 处理滤镜逻辑
     protected TextureController mController;
     private MyRenderer mRenderer;
-
     // 相机Id，后置是0，前置是1
     private int cameraId = 1;
     // 默认的相机滤镜的Id
@@ -225,17 +219,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
     private void initRajawaliSurface() {
         mRenderSurface = (org.rajawali3d.view.SurfaceView) findViewById(R.id.rajwali_surface);
-
         // 将Rajawali的SurfaceView的背景设为透明
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
-
         // 将Rajawali的SurfaceView的尺寸设为录像的尺寸
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);
-
         mISurfaceRenderer = new My3DRenderer(this);
         ((My3DRenderer) mISurfaceRenderer).setScreenW(IMAGE_WIDTH);
         ((My3DRenderer) mISurfaceRenderer).setScreenH(IMAGE_HEIGHT);
-
         mRenderSurface.setSurfaceRenderer(mISurfaceRenderer);
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -283,9 +273,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
     private void initCaptureButton() {
         mCapture = (CircularProgressView) findViewById(R.id.btn_capture);
-
         mCapture.setTotal((int)maxTime);
-
         // 拍照/录像按钮的逻辑
         mCapture.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -385,7 +373,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private void initOrnamentSheet() {
         mOrnaments = new ArrayList<>();
         mOrnamentAdapter = new OrnamentAdapter(mContext, mOrnaments);
-
         mOrnamentAdapter.setOnItemClickListener(new OrnamentAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -409,8 +396,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
         View sheetView = LayoutInflater.from(mContext)
                 .inflate(R.layout.layout_bottom_sheet, null);
-
-        //Ornaments --> mOrnamentAdapter --> mRvOrnament
         mRvOrnament = (RecyclerView) sheetView.findViewById(R.id.rv_gallery);
         mRvOrnament.setAdapter(mOrnamentAdapter);
         mRvOrnament.setLayoutManager(new GridLayoutManager(mContext, 4));
@@ -419,12 +404,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mOrnamentSheet.getWindow().findViewById(R.id.design_bottom_sheet)
                 .setBackgroundResource(android.R.color.transparent);
 
-        //头盔
         mOrnaments.addAll(OrnamentFactory.getPresetOrnament());
-
-        //可变形面具
         mOrnaments.addAll(OrnamentFactory.getPresetMask());
-
         mOrnamentAdapter.notifyDataSetChanged();
     }
 
@@ -457,15 +438,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         if (modelList != null && modelList.size() > 0) {
             for (Ornament.Model model : modelList) {
                 if (model != null && model.isNeedStreaming()) {
+
                     int streamingViewType = model.getStreamingViewType();
-                    //luoyouren
-                    Log.w(TAG, "model isNeedStreaming; model's type = " + streamingViewType + " model's path: " + model.getTexturePath());
                     if (streamingViewType == Ornament.Model.STREAMING_IMAGE_VIEW) {
                         handleStreamingTextureImageView();
                     } else if (streamingViewType == Ornament.Model.STREAMING_WEB_VIEW) {
                         handleStreamingTextureWebView();
                     }
-
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                             model.getStreamingViewWidth(), model.getStreamingViewHeight());
                     mLayoutRoot.addView(mStreamingView, layoutParams);
@@ -602,10 +581,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
             mController = new TextureController(mContext);
             // 设置数据源
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //初始化Render：
-                //1. 显示摄像头图像
-                //2. 追踪头部，并返回状态信息
-                //3. 在回调中，根据上面的状态信息控制模型的状态，并渲染
                 mRenderer = new CameraTrackRenderer(mContext, (CameraManager)getSystemService(CAMERA_SERVICE), mController, cameraId);
                 // 人脸检测的回调
                 ((CameraTrackRenderer) mRenderer).setTrackCallBackListener(new CameraTrackRenderer.TrackCallBackListener() {
@@ -624,7 +599,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                 mRenderer = new Camera1Renderer(mController, cameraId);
             }
 
-            //初始化所有UI及配套资源
             setContentView();
 
             mController.setFrameCallback(IMAGE_WIDTH, IMAGE_HEIGHT, ARCamActivity.this);
@@ -932,7 +906,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         }).start();
     }
 
-    //luoyouren: 非常重要！这里负责人脸检测结果的响应，比如3D模型的旋转、3D模型的平移、人脸关键点、显示人脸检测的参数
     private void onTrackDetectedCallback(STMobileFaceAction[] faceActions, final int orientation, final int value,
                                          final float pitch, final float roll, final float yaw,
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,

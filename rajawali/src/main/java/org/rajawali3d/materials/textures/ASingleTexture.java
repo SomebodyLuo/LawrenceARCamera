@@ -89,8 +89,6 @@ public abstract class ASingleTexture extends ATexture
 		Context context = TextureManager.getInstance().getContext();
 		BitmapFactory.Options bitmapScalingOptions = new BitmapFactory.Options();
 		bitmapScalingOptions.inScaled = false;
-
-		//luoyouren: 根据resourId构造一个Bitmap
 		setBitmap(BitmapFactory.decodeResource(context.getResources(), resourceId, bitmapScalingOptions));
 	}
 

@@ -25,8 +25,6 @@ import com.simoncherry.arcamera.util.OrnamentFactory;
 
 import org.rajawali3d.Geometry3D;
 import org.rajawali3d.Object3D;
-import org.rajawali3d.lights.DirectionalLight;
-import org.rajawali3d.lights.PointLight;
 import org.rajawali3d.loader.LoaderOBJ;
 import org.rajawali3d.loader.ParsingException;
 import org.rajawali3d.materials.Material;
@@ -56,8 +54,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     private Object3D mContainer;
     private List<Object3D> mObject3DList = new ArrayList<>();
-    private DirectionalLight directionalLight;
-    private PointLight pointLightLeft, pointLightMid, pointLightRight, pointLightUp;
     private Object3D mPickedObject;
     private Object3D mShaderPlane;
     private Material mCustomMaterial;
@@ -178,44 +174,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     @Override
     protected void initScene() {
-
-        // 方向光
-        directionalLight = new DirectionalLight(0.0f, 0.0f, -1.0);
-        directionalLight.setColor(1.0f, 1.0f, 1.0f);
-        directionalLight.setPower(0.5f);
-        getCurrentScene().addLight(directionalLight);
-
-        // 三盏点光源
-        pointLightLeft = new PointLight();
-        pointLightLeft.setPosition(-15.0f, -8.2f, -10.0f);
-        pointLightLeft.setColor(1.0f, 1.0f, 1.0f);
-        pointLightLeft.setPower(8.0f);
-
-        pointLightMid = new PointLight();
-        pointLightMid.setPosition(0.0f, -8.2f, 25.0f);
-        pointLightMid.setColor(1.0f, 1.0f, 1.0f);
-        pointLightMid.setPower(1.0f);
-
-        pointLightRight = new PointLight();
-        pointLightRight.setPosition(15.0f, -8.2f, -10.0f);
-        pointLightRight.setColor(1.0f, 1.0f, 1.0f);
-        pointLightRight.setPower(8.0f);
-
-        pointLightUp = new PointLight();
-        pointLightUp.setPosition(0.0f, 47.0f, 0.0f);
-        pointLightUp.setColor(1.0f, 1.0f, 1.0f);
-        pointLightUp.setPower(8.0f);
-
-        getCurrentScene().addLight(pointLightLeft);
-        getCurrentScene().addLight(pointLightMid);
-        getCurrentScene().addLight(pointLightRight);
-        getCurrentScene().addLight(pointLightUp);
-
         try {
             mContainer = new Object3D();
             getCurrentScene().addChild(mContainer);
-//            getCurrentScene().getCamera().setZ(5.5);	//original
-			getCurrentScene().getCamera().setZ(105.5);
+            getCurrentScene().getCamera().setZ(5.5);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,21 +186,17 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         getCurrentScene().setBackgroundColor(0);
     }
 
-    // luoyouren: 渲染
     @Override
     protected void onRender(long ellapsedRealtime, double deltaTime) {
         super.onRender(ellapsedRealtime, deltaTime);
 
-        //每次设置头盔后，需要更新头盔(mIsNeedUpdateOrnament = true)
         if (mIsNeedUpdateOrnament) {
             mIsNeedUpdateOrnament = false;
-            //luoyouren: 加载头盔
             loadOrnament();
         }
 
         if (mModelType == Ornament.MODEL_TYPE_STATIC || mModelType == Ornament.MODEL_TYPE_SHADER) {
             if (mOrnamentModel != null) {
-                //luoyouren:
                 if (mOrnamentModel.isEnableRotation()) {
                     // 处理3D模型的旋转
                     mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
@@ -253,14 +211,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                     // 处理3D模型的平移
                     getCurrentCamera().setX(mTransX);
                     getCurrentCamera().setY(mTransY);
-
-
-                    String modelName = mOrnamentModel.getObject3DList().get(0).getName();
-                    if(modelName.equals("ironman_mask"))
-                    {
-
-
-                    }
                 }
             }
 
@@ -281,7 +231,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
             if (!mIsChanging && mPoints != null && mPoints.size() > 0) {
                 mIsChanging = true;
 
-                //luoyouren: 移动模型里面的顶点
                 try {  // FIXME
                     if (mGeometry3DList != null && mGeometry3DList.size() > 0) {
                         for (Geometry3D geometry3D : mGeometry3DList) {
@@ -440,7 +389,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         try {
             clearScene();
 
-            //luoyouren: 当用户在UI上面选择了某个头盔后，mOrnamentModel将被相应的更新
             if (mOrnamentModel != null) {
                 mModelType = mOrnamentModel.getType();
                 switch (mModelType) {
@@ -506,13 +454,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     private void loadNormalMaterialModel() {
         try {
-            //luoyouren: mOrnamentModel就是要新的加载的头盔
             List<Ornament.Model> modelList = mOrnamentModel.getModelList();
             if (modelList != null && modelList.size() > 0) {
                 for (Ornament.Model model : modelList) {
-                    //luoyouren
                     String texturePath = model.getTexturePath();
-                    Log.i(TAG, "loadNormalMaterialModel: model's texturePath = " + texturePath + "  model's name = " + model.getName());
 
                     Object3D object3D;
                     if (texturePath != null) {
@@ -534,13 +479,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     private Object3D loadStaticModel(Ornament.Model model) {
         try {
-            Log.i(TAG, "--------loadStaticModel----------");
-
             Object3D object3D;
             int modelResId = model.getModelResId();
             int buildInType = model.getBuildInType();
             if (modelResId != -1) {
-                //luoyouren: 获取头盔的模型数据：模型与材质及贴图
                 object3D = getExternalModel(modelResId);
             } else if (buildInType != -1) {
                 object3D = getBuildInModel(model, buildInType);
@@ -548,11 +490,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 throw new RuntimeException("invalid object3d");
             }
 
-
-            setModelBaseParams(model, object3D);    // 坐标、旋转参数
-            setModelTexture(model, object3D);       // 纹理
-            setModelMaterial(model, object3D);      // 材质
-            setModelColor(model, object3D);         // 颜色
+            setModelBaseParams(model, object3D);
+            setModelTexture(model, object3D);
+            setModelMaterial(model, object3D);
+            setModelColor(model, object3D);
             handleObjectPicking(model, object3D);
             handleStreamingTexture(model);
 
@@ -589,18 +530,14 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private void setModelBaseParams(Ornament.Model model, Object3D object3D) {
         String name = model.getName();
         object3D.setName(name == null ? "" : name);
-
-        //luoyouren: 下面设置的参数是在OrnamentFactory.java里面构造每一个头盔时，赋值了的
         object3D.setScale(model.getScale());
         object3D.setPosition(model.getOffsetX(), model.getOffsetY(), model.getOffsetZ());
         object3D.setRotation(model.getRotateX(), model.getRotateY(), model.getRotateZ());
     }
 
-    //luoyouren: 设置模型的纹理
     private void setModelTexture(Ornament.Model model, Object3D object3D) throws ATexture.TextureException {
         int textureResId = model.getTextureResId();
         if (textureResId > 0) {
-            //删除原来的纹理
             ATexture texture = object3D.getMaterial().getTextureList().get(0);
             object3D.getMaterial().removeTexture(texture);
 
@@ -611,17 +548,14 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 if (model.isNeedSkinColor()) {
                     bitmap = changeSkinColor(bitmap, mSkinColor);
                 }
-                // 添加配套纹理
                 object3D.getMaterial().addTexture(new Texture("canvas", bitmap));
                 mIsChanging = false;
             }
         }
     }
 
-    //luoyouren: 设置材质
     private void setModelMaterial(Ornament.Model model, Object3D object3D) {
         int materialId = model.getMaterialId();
-        Log.i(TAG, "model's MaterialID = " + materialId);
         if (materialId > -1) {
             object3D.setMaterial(MaterialFactory.getMaterialById(materialId));
         }
@@ -700,7 +634,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
             parser.parse();
             Object3D object3D = parser.getParsedObject();
 
-            //luoyouren: 下面设置的参数是在OrnamentFactory.java里面构造每一个头盔时，赋值了的
             object3D.setScale(model.getScale());
             object3D.setPosition(model.getOffsetX(), model.getOffsetY(), model.getOffsetZ());
             object3D.setRotation(model.getRotateX(), model.getRotateY(), model.getRotateZ());
@@ -710,7 +643,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
             String texturePath = model.getTexturePath();
             Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromFilePath(texturePath, 300, 300);
-
             // 调整肤色
             if (model.isNeedSkinColor()) {
                 bitmap = changeSkinColor(bitmap, mSkinColor);
