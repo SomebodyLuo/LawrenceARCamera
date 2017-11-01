@@ -25,6 +25,8 @@ import com.simoncherry.arcamera.util.OrnamentFactory;
 
 import org.rajawali3d.Geometry3D;
 import org.rajawali3d.Object3D;
+import org.rajawali3d.lights.DirectionalLight;
+import org.rajawali3d.lights.PointLight;
 import org.rajawali3d.loader.LoaderOBJ;
 import org.rajawali3d.loader.ParsingException;
 import org.rajawali3d.materials.Material;
@@ -40,6 +42,7 @@ import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.renderer.Renderer;
 import org.rajawali3d.util.ObjectColorPicker;
 import org.rajawali3d.util.OnObjectPickedListener;
+import org.rajawali3d.util.RajLog;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -54,6 +57,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     private Object3D mContainer;
     private List<Object3D> mObject3DList = new ArrayList<>();
+    private DirectionalLight directionalLight;
+    private PointLight pointLightLeft, pointLightMid, pointLightRight, pointLightUp;
     private Object3D mPickedObject;
     private Object3D mShaderPlane;
     private Material mCustomMaterial;
@@ -174,10 +179,44 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     @Override
     protected void initScene() {
+
+        // 方向光
+        directionalLight = new DirectionalLight(0.0f, 0.0f, -1.0);
+        directionalLight.setColor(1.0f, 1.0f, 1.0f);
+        directionalLight.setPower(0.5f);
+        getCurrentScene().addLight(directionalLight);
+
+        // 三盏点光源
+        pointLightLeft = new PointLight();
+        pointLightLeft.setPosition(-20.0f, -10.2f, 0.0f);
+        pointLightLeft.setColor(1.0f, 1.0f, 1.0f);
+        pointLightLeft.setPower(15.0f);
+
+        pointLightMid = new PointLight();
+        pointLightMid.setPosition(0.0f, -10.2f, 25.0f);
+        pointLightMid.setColor(1.0f, 1.0f, 1.0f);
+        pointLightMid.setPower(5.0f);
+
+        pointLightRight = new PointLight();
+        pointLightRight.setPosition(20.0f, -10.2f, 0.0f);
+        pointLightRight.setColor(1.0f, 1.0f, 1.0f);
+        pointLightRight.setPower(15.0f);
+
+        pointLightUp = new PointLight();
+        pointLightUp.setPosition(0.0f, 40.0f, 0.0f);
+        pointLightUp.setColor(1.0f, 1.0f, 1.0f);
+        pointLightUp.setPower(15.0f);
+
+        getCurrentScene().addLight(pointLightLeft);
+        getCurrentScene().addLight(pointLightMid);
+        getCurrentScene().addLight(pointLightRight);
+        getCurrentScene().addLight(pointLightUp);
+
         try {
             mContainer = new Object3D();
             getCurrentScene().addChild(mContainer);
-            getCurrentScene().getCamera().setZ(5.5);
+//            getCurrentScene().getCamera().setZ(5.5);	//original
+			getCurrentScene().getCamera().setZ(105.5);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -480,7 +480,7 @@ public class LoaderOBJ extends AMeshLoader {
 		private final String SPECULAR_HIGHLIGHT_TEXTURE = "map_Ns";
 		private final String ALPHA_TEXTURE_1 = "map_d";
 		private final String ALPHA_TEXTURE_2 = "map_Tr";
-		private final String BUMP_TEXTURE = "map_Bump";
+		private final String BUMP_TEXTURE = "map_bump";
 
 		private Stack<MaterialDef> mMaterials;
 		private String mResourcePackage;
