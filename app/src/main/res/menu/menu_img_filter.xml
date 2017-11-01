@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_img_deal"
+        app:showAsAction="always"
+        android:title="全部处理" />
+    <item android:id="@+id/menu_img_default"
+        android:title="原图" />
+    <item android:id="@+id/menu_img_gray"
+        android:title="灰度" />
+    <item android:id="@+id/menu_img_cool"
+        android:title="冷色调" />
+    <item android:id="@+id/menu_img_warn"
+        android:title="暖色调" />
+    <item android:id="@+id/menu_img_blur"
+        android:title="模糊" />
+    <item android:id="@+id/menu_img_mag"
+        android:title="放大镜" />
+    <item android:id="@+id/menu_img_binary"
+        android:title="黑白" />
+    <item android:id="@+id/menu_img_negative"
+        android:title="底片" />
+    <item android:id="@+id/menu_img_emboss"
+        android:title="浮雕" />
+    <item android:id="@+id/menu_img_mosaic"
+        android:title="马赛克" />
+</menu>

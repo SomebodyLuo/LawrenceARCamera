@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btn_ar_cam"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="主页面"/>
+
+        <Button
+            android:id="@+id/btn_swap_face"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Swap Face"/>
+
+        <Button
+            android:id="@+id/btn_image_renderer"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Image Renderer"/>
+
+        <Button
+            android:id="@+id/btn_camera_renderer"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Camera Renderer"/>
+
+        <Button
+            android:id="@+id/btn_cam_adjust"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Camera Adjust Filter"/>
+
+        <Button
+            android:id="@+id/btn_faceu_test"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="FaceU Test"/>
+
+        <Button
+            android:id="@+id/btn_cam_3d"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Camera with 3d model"/>
+
+        <Button
+            android:id="@+id/btn_cam_record"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Camera Record"/>
+
+        <Button
+            android:id="@+id/btn_record_3d"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Record with 3d model"/>
+
+        <Button
+            android:id="@+id/btn_dynamic_model"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Dynamic Model"/>
+    </LinearLayout>
+
+</ScrollView>

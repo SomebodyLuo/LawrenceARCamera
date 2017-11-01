@@ -1,0 +1,14 @@
+# Blender MTL File: 'vmask_mirror.blend'
+# Material Count: 1
+
+newmtl m0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.470588 0.470588 0.470588
+Ks 0.449020 0.449020 0.449020
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd mirror01.png
+map_d mirror01.png

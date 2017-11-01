@@ -1,0 +1,26 @@
+# Blender MTL File: 'sun_glasses2.blend'
+# Material Count: 2
+
+newmtl default1
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd sunglasses.png
+map_Ka sunglasses.png
+
+newmtl default2
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.500000
+illum 2
+map_Kd sunglasses.png
+map_Ka sunglasses.png
