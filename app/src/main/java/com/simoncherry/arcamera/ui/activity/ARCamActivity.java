@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ import com.simoncherry.arcamera.util.LandmarkUtils;
 import com.simoncherry.arcamera.util.OrnamentFactory;
 import com.simoncherry.arcamera.util.PermissionUtils;
 
+import org.rajawali3d.Object3D;
 import org.rajawali3d.renderer.ISurfaceRenderer;
 import org.rajawali3d.view.ISurface;
 
@@ -145,6 +147,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private OrnamentAdapter mOrnamentAdapter;
     private List<Ornament> mOrnaments;
 
+    private List<Ornament> mFacePoints;
+
     // 特效列表
     private CustomBottomSheet mEffectSheet;
     private RecyclerView mRvEffect;
@@ -191,6 +195,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         initCaptureButton();
         initMenuButton();
         initCommonView();
+
+        initFacePoints();
         initFilterSheet();
         initOrnamentSheet();
         initEffectSheet();
@@ -341,8 +347,12 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private void initCommonView() {
         mLayoutRoot = (RelativeLayout) findViewById(R.id.layout_root);
         mTrackText = (TextView) findViewById(R.id.tv_track);
+        mTrackText.setTextColor(0xFFFF0000);
         mActionText = (TextView) findViewById(R.id.tv_action);
+        mActionText.setTextColor(0xFFFF0000);
     }
+
+
 
     private void initFilterSheet() {
         mFilters = new ArrayList<>();
@@ -368,6 +378,16 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
         mFilters.addAll(FilterFactory.getPresetFilter());
         mFilterAdapter.notifyDataSetChanged();
+    }
+
+    private  void initFacePoints() {
+        mFacePoints = new ArrayList<>();
+        mFacePoints.addAll(OrnamentFactory.getFacePoints());
+
+        if(mFacePoints.size() > 0) {
+            ((My3DRenderer) mISurfaceRenderer).setOrnamentModel(mFacePoints.get(0));
+            ((My3DRenderer) mISurfaceRenderer).setIsNeedUpdateOrnament(true);
+        }
     }
 
     private void initOrnamentSheet() {
@@ -868,6 +888,11 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     }
 
     @Override
+    public void onGetPointsPosition(Rect rect) {
+        ((My3DRenderer) mISurfaceRenderer).setPointsRect(rect);
+    }
+
+    @Override
     public void onGetFaceLandmark(float[] landmarkX, float[] landmarkY, int isMouthOpen) {
         if (mIsNeedSkinColor) {
             float x = landmarkX[44] * IMAGE_WIDTH;
@@ -906,7 +931,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         }).start();
     }
 
-    private void onTrackDetectedCallback(STMobileFaceAction[] faceActions, final int orientation, final int value,
+    private void onTrackDetectedCallback(final STMobileFaceAction[] faceActions, final int orientation, final int value,
                                          final float pitch, final float roll, final float yaw,
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
                                          final int headYaw, final int headPitch, final int browJump) {
@@ -914,16 +939,34 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
         mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+
+        // 处理人脸长方形
+        mPresenter.handelFacePoints(faceActions);
+
         // 处理人脸关键点
-        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+
         // 显示人脸检测的参数
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mTrackText.setText("TRACK: " + value + " MS"
                         + "\nPITCH: " + pitch + "\nROLL: " + roll + "\nYAW: " + yaw + "\nEYE_DIST:" + eye_dist);
-                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
-                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+//                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
+//                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+
+                //luoyouren: show face rect
+                if(faceActions.length > 0)
+                {
+                    int faceWidth = faceActions[0].getFace().getRect().width();
+                    int faceHeight = faceActions[0].getFace().getRect().height();
+                    int l = faceActions[0].getFace().getRect().left;
+                    int t = faceActions[0].getFace().getRect().top;
+                    int r = faceActions[0].getFace().getRect().right;
+                    int b = faceActions[0].getFace().getRect().bottom;
+                    mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
+                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
+                }
             }
         });
     }

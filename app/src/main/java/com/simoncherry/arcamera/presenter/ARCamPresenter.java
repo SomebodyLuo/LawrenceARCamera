@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 public class ARCamPresenter implements ARCamContract.Presenter {
-    private final static String TAG = ARCamPresenter.class.getSimpleName();
+    private final static String TAG = "luoyouren_ARCamP";
 
     private Context mContext;
     private ARCamContract.View mView;
@@ -119,6 +119,12 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         mView.onGet3dModelRotation(-pitch, roll+90, -yaw);
     }
 
+    @Override
+    public void handelFacePoints(STMobileFaceAction[] faceActions)
+    {
+//        mView.onGetPointsPosition(faceActions[0].getFace().getRect());
+    }
+
     // 处理3D模型的平移
     @Override
     public void handle3dModelTransition(STMobileFaceAction[] faceActions,
@@ -133,14 +139,18 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             rect = STUtils.RotateDeg90(r.getFace().getRect(), previewWidth, previewHeight);
         }
 
+        mView.onGetPointsPosition(rect);
+
         float centerX = (rect.right + rect.left) / 2.0f;
         float centerY = (rect.bottom + rect.top) / 2.0f;
+        Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
+
         float x = (centerX / previewHeight) * 2.0f - 1.0f;
         float y = (centerY / previewWidth) * 2.0f - 1.0f;
         float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25
         tmp = (float) (tmp / Math.cos(Math.PI*yaw/180));  // 根据旋转角度还原两眼距离
         tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1
-        float z = tmp * 3.0f + 1.0f;
+        float z = tmp * 2.0f + 1.0f;
         Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
 
         mView.onGet3dModelTransition(x, y, z);

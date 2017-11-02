@@ -20,6 +20,7 @@ public class Ornament {
     public static final int MODEL_TYPE_STATIC = 0;
     public static final int MODEL_TYPE_DYNAMIC = 1;
     public static final int MODEL_TYPE_SHADER = 2;
+    public  static final int MODEL_TYPE_POINT = 3;
 
     private int type = MODEL_TYPE_NONE;
     private int imgResId;

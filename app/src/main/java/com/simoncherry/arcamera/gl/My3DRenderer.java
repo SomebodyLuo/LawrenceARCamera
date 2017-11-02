@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -30,6 +31,7 @@ import org.rajawali3d.lights.PointLight;
 import org.rajawali3d.loader.LoaderOBJ;
 import org.rajawali3d.loader.ParsingException;
 import org.rajawali3d.materials.Material;
+import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.plugins.IMaterialPlugin;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.AlphaMapTexture;
@@ -78,6 +80,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private float mTransX = 0.0f;
     private float mTransY = 0.0f;
     private float mScale = 1.0f;
+
+    // 用于人脸长方形
+    private Rect mRect;
+
     // 用于动态3D模型
     private List<Geometry3D> mGeometry3DList = new ArrayList<>();
     private List<DynamicPoint> mPoints = new ArrayList<>();
@@ -152,6 +158,13 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         }
     }
 
+    // 人脸长方形的位置
+    public void setPointsRect(Rect rect)
+    {
+        if (mModelType == Ornament.MODEL_TYPE_POINT)
+        mRect = rect;
+    }
+
     // 设置3D模型的缩放比例
     public void setScale(float scale) {
         mScale = scale;
@@ -207,6 +220,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         pointLightUp.setColor(1.0f, 1.0f, 1.0f);
         pointLightUp.setPower(15.0f);
 
+        Object3D lightContainer;
+
         getCurrentScene().addLight(pointLightLeft);
         getCurrentScene().addLight(pointLightMid);
         getCurrentScene().addLight(pointLightRight);
@@ -236,6 +251,11 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
         if (mModelType == Ornament.MODEL_TYPE_STATIC || mModelType == Ornament.MODEL_TYPE_SHADER) {
             if (mOrnamentModel != null) {
+                /*
+                private boolean enableRotation = true;
+                private boolean enableTransition = true;
+                private boolean enableScale = true;
+                // 默认是 使能旋转 */
                 if (mOrnamentModel.isEnableRotation()) {
                     // 处理3D模型的旋转
                     mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
@@ -287,6 +307,18 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 }
 
                 mIsChanging = false;
+            }
+        } else if (mModelType == Ornament.MODEL_TYPE_POINT) {
+
+            if ((mOrnamentModel != null) && (mRect != null)) {
+                List<Object3D> points = mOrnamentModel.getObject3DList();
+                if (points.size() >= 4) {
+                    points.get(0).setPosition(mRect.left, mRect.top, 0);
+                    points.get(1).setPosition(mRect.right, mRect.top, 0);
+                    points.get(2).setPosition(mRect.left, mRect.bottom, 0);
+                    points.get(3).setPosition(mRect.right, mRect.bottom, 0);
+                    points.get(4).setPosition(0, 0, 0);
+                }
             }
         }
 
@@ -439,6 +471,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                         loadNormalMaterialModel();
                         initOrnamentParams();
                         break;
+                    case Ornament.MODEL_TYPE_POINT:
+                        loadFacePoints();
+                        initOrnamentParams();
+                        break;
                 }
 
                 boolean isHasShaderPlane = mOrnamentModel.isHasShaderPlane();
@@ -489,6 +525,50 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadFacePoints() {
+        //材质
+        Material mat = new Material();
+        mat.enableLighting(true);
+        mat.setColor(0xFFFF0000);
+        mat.setDiffuseMethod(new DiffuseMethod.Toon());
+
+        Sphere sphere = new Sphere(2, 16, 16);
+        sphere.setPosition(0, 0, 0);
+//        sphere.setColor(0xff999900);
+        sphere.setMaterial(mat);
+
+        //左上
+        Plane plane1 = new Plane(1, 1, 24, 24);
+        plane1.setPosition(-5, 5, 0);
+        plane1.setMaterial(mat);
+
+        //右上
+        Plane plane2 = new Plane(1, 1, 24, 24);
+        plane2.setPosition(5, 5, 0);
+        plane2.setMaterial(mat);
+
+        //左下
+        Plane plane3 = new Plane(1, 1, 24, 24);
+        plane3.setPosition(-5, -5, 0);
+        plane3.setMaterial(mat);
+
+        //右下
+        Plane plane4 = new Plane(1, 1, 24, 24);
+        plane4.setPosition(5, -5, 0);
+        plane4.setMaterial(mat);
+
+        List<Object3D> PointsList = new ArrayList<>();
+        PointsList.add(plane1);
+        PointsList.add(plane2);
+        PointsList.add(plane3);
+        PointsList.add(plane4);
+        PointsList.add(sphere);
+
+        mOrnamentModel.setObject3DList(PointsList);
+
+        mObject3DList.addAll(PointsList);
     }
 
     private void loadNormalMaterialModel() {
@@ -717,6 +797,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         mContainer.setScale(1.0f);
         mContainer.setRotation(0, 0, 0);
         mContainer.setPosition(0, 0, 0);
+
+        //luoyouren: set current camera X Y
         getCurrentCamera().setX(0);
         getCurrentCamera().setY(0);
     }

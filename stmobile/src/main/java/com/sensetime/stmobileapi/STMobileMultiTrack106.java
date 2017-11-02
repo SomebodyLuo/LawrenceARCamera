@@ -291,6 +291,7 @@ public class STMobileMultiTrack106 {
 		}
 
 		long startTime = System.currentTimeMillis();
+		//luoyouren: 真正的人脸检测 native 调用
 		int rst = STMobileApiBridge.FACESDK_INSTANCE.st_mobile_tracker_106_track_face_action(trackHandle, colorImage, cvImageFormat, imageWidth,
 				imageHeight, imageStride, orientation, faceAction_ptrToArray, ptrToSize);
 		long endTime = System.currentTimeMillis();

@@ -41,7 +41,7 @@ import static android.hardware.camera2.CameraDevice.TEMPLATE_PREVIEW;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraTrackRenderer implements MyRenderer {
 
-    private final static String TAG = CameraTrackRenderer.class.getSimpleName();
+    private final static String TAG = "luoyouren_CTR";
 
     ///< 检测脸部动作：张嘴、眨眼、抬眉、点头、摇头
     private static final int ST_MOBILE_TRACKING_ENABLE_FACE_ACTION = 0x00000020;
@@ -86,6 +86,7 @@ public class CameraTrackRenderer implements MyRenderer {
 
         nv21 = new byte[PREVIEW_WIDTH * PREVIEW_HEIGHT * 2];
 
+        //luoyouren: 创建追踪器
         tracker = new STMobileMultiTrack106(context, ST_MOBILE_TRACKING_ENABLE_FACE_ACTION);
         int max = 1;
         tracker.setMaxDetectableFaces(max);
@@ -112,9 +113,28 @@ public class CameraTrackRenderer implements MyRenderer {
             assert map != null;
             Size[] sizes = map.getOutputSizes(SurfaceHolder.class);
             //自定义规则，选个大小
+            /*
+            luoyouren_CTR: size's lenth = 9
+            luoyouren_CTR: sizes[0] = 1440 / 1080 ; 1440x1080=1555200
+            luoyouren_CTR: sizes[1] = 1280 / 960
+            luoyouren_CTR: sizes[2] = 1280 / 720
+            luoyouren_CTR: sizes[3] = 960 / 540
+            luoyouren_CTR: sizes[4] = 720 / 480
+            luoyouren_CTR: sizes[5] = 640 / 480 ; 640x480=307200
+            luoyouren_CTR: sizes[6] = 352 / 288
+            luoyouren_CTR: sizes[7] = 320 / 240
+            luoyouren_CTR: sizes[8] = 176 / 144
+             */
             mPreviewSize = sizes[0];
+            Log.d(TAG, "size's lenth = " + sizes.length);
+            for(int i = 0; i < sizes.length; i++)
+            {
+                Log.d(TAG, "sizes[" + i + "]" + " = " + sizes[i].getWidth() + " / " +  sizes[i].getHeight());
+            }
+
             mController.setDataSize(mPreviewSize.getHeight(), mPreviewSize.getWidth());
 
+            //640x480
             imageReader = ImageReader.newInstance(PREVIEW_WIDTH, PREVIEW_HEIGHT, ImageFormat.YUV_420_888, 2);
             imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -202,7 +222,9 @@ public class CameraTrackRenderer implements MyRenderer {
             ByteBuffer buffer = image.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.capacity()];
             buffer.get(bytes);
-            Log.i(TAG, "get image bytes size: " + bytes.length);
+            //luoyouren: 说明image的大小就是640x480
+            Log.d(TAG, "handlePreviewData: image.width = " + image.getWidth() + " image.height = " + image.getHeight());    //640x480
+            Log.d(TAG, "handlePreviewData: get image bytes size = " + bytes.length);    // 307200
 
             System.arraycopy(bytes, 0, nv21, 0, bytes.length);
 
@@ -224,6 +246,7 @@ public class CameraTrackRenderer implements MyRenderer {
                             direction = (direction ^ 2);
                         }
 
+                        //luoyouren: 调用人脸追踪器，分析人脸状态
                         STMobileFaceAction[] faceActions = tracker.trackFaceAction(nv21, direction, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
                         long endTime = System.currentTimeMillis();

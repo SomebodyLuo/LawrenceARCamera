@@ -5,10 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ARCamera.iml" filepath="$PROJECT_DIR$/ARCamera.iml" />
       <module fileurl="file://$PROJECT_DIR$/ARCamera-master.iml" filepath="$PROJECT_DIR$/ARCamera-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/rajawali/rajawali.iml" filepath="$PROJECT_DIR$/rajawali/rajawali.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rajawali/rajawali.iml" filepath="$PROJECT_DIR$/rajawali/rajawali.iml" />
-      <module fileurl="file://$PROJECT_DIR$/stmobile/stmobile.iml" filepath="$PROJECT_DIR$/stmobile/stmobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/stmobile/stmobile.iml" filepath="$PROJECT_DIR$/stmobile/stmobile.iml" />
     </modules>
   </component>

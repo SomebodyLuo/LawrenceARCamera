@@ -1,6 +1,7 @@
 package com.simoncherry.arcamera.contract;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 
 import com.sensetime.stmobileapi.STMobileFaceAction;
 import com.simoncherry.arcamera.model.DynamicPoint;
@@ -20,6 +21,8 @@ public interface ARCamContract {
         void onGet3dModelTransition(float x, float y, float z);
         void onGetFaceLandmark(float[] landmarkX, float[] landmarkY, int isMouthOpen);
         void onGetChangePoint(List<DynamicPoint> mDynamicPoints);
+
+        void onGetPointsPosition(Rect rect);
     }
 
     interface Presenter {
@@ -33,5 +36,7 @@ public interface ARCamContract {
         void handleFaceLandmark(STMobileFaceAction[] faceActions, int orientation, int mouthAh,
                                 int previewWidth, int previewHeight);
         void handleChangeModel(float[] landmarkX, float[] landmarkY);
+
+        void handelFacePoints(STMobileFaceAction[] faceActions);
     }
 }

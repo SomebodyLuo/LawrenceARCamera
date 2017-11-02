@@ -7,10 +7,15 @@ import com.simoncherry.arcamera.gl.TextureController;
 import com.simoncherry.arcamera.model.Ornament;
 import com.simoncherry.arcamera.rajawali.CustomMaterialPlugin;
 import com.simoncherry.arcamera.rajawali.CustomVertexShaderMaterialPlugin;
+import com.simoncherry.arcamera.ui.adapter.OrnamentAdapter;
 
 import org.rajawali3d.Object3D;
+import org.rajawali3d.materials.Material;
+import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.plugins.IMaterialPlugin;
 import org.rajawali3d.primitives.NPrism;
+import org.rajawali3d.primitives.Plane;
+import org.rajawali3d.primitives.PointSprite;
 import org.rajawali3d.primitives.Sphere;
 
 import java.util.ArrayList;
@@ -38,6 +43,14 @@ public class OrnamentFactory {
         ornaments.add(getLaptop());
         ornaments.add(getCrystalBall());
         ornaments.add(getInterview());
+        return ornaments;
+    }
+
+    public static  List<Ornament> getFacePoints() {
+        List<Ornament> ornaments = new ArrayList<>();
+
+        ornaments.add(getPoints());
+
         return ornaments;
     }
 
@@ -175,6 +188,14 @@ public class OrnamentFactory {
         ornament.setTimeStep(0.01f);
         ornament.setTimePeriod(0.125f);
         ornament.setPlaneOffsetZ(0.6f);
+
+        return ornament;
+    }
+
+    private  static Ornament getPoints() {
+        Ornament ornament = new Ornament();
+
+        ornament.setType(Ornament.MODEL_TYPE_POINT);
 
         return ornament;
     }
