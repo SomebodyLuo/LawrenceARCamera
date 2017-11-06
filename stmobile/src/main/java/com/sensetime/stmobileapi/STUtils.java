@@ -162,9 +162,9 @@ public class STUtils {
 		if(canvas == null) return;
 
 		Paint paint = new Paint(); 
-		paint.setColor(Color.rgb(57, 138, 243));
+		paint.setColor(Color.rgb(200, 100, 100));
 		int strokeWidth = Math.max(width / 240, 2);
-		paint.setStrokeWidth(strokeWidth);
+		paint.setStrokeWidth(strokeWidth);	//画笔宽度
 
 		if(frontCamera) {
 			int left = rect.left;

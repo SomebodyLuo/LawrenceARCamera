@@ -62,6 +62,8 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
     private final static String TAG = DynamicModelActivity.class.getSimpleName();
 
     private SurfaceView mSurfaceView;
+
+    int faceWidth, faceHeight, l, t, r, b;
     private TextView mTrackText, mActionText;
     private ImageView mIvLandmark;
 
@@ -96,7 +98,9 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
     protected void setContentView(){
         setContentView(R.layout.activity_cam_3d);
         mTrackText = (TextView) findViewById(R.id.tv_track);
+        mTrackText.setTextColor(0xFFFF0000);
         mActionText = (TextView) findViewById(R.id.tv_action);
+        mActionText.setTextColor(0xFFFF0000);
         mIvLandmark = (ImageView) findViewById(R.id.iv_landmark);
 
         mRenderSurface = (org.rajawali3d.view.SurfaceView) findViewById(R.id.rajwali_surface);
@@ -133,6 +137,18 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
 //                        handle3dModelTransition(faceActions, orientation, eye_dist, yaw);
                         setLandmarkFilter(faceActions, orientation, mouthAh);
                         final Bitmap bitmap = handleDrawLandMark(faceActions, orientation);
+
+                        //luoyouren: show face rect
+                        if(faceActions.length > 0)
+                        {
+                            faceWidth = faceActions[0].getFace().getRect().width();
+                            faceHeight = faceActions[0].getFace().getRect().height();
+                            l = faceActions[0].getFace().getRect().left;
+                            t = faceActions[0].getFace().getRect().top;
+                            r = faceActions[0].getFace().getRect().right;
+                            b = faceActions[0].getFace().getRect().bottom;
+                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -141,8 +157,13 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
                                 }
                                 mTrackText.setText("TRACK: " + value + " MS"
                                         + "\nPITCH: " + pitch + "\nROLL: " + roll + "\nYAW: " + yaw + "\nEYE_DIST:" + eye_dist);
-                                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
-                                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+
+//                                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
+//                                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+
+                                //luoyouren: show face rect
+                                mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
+                                        "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
                             }
                         });
                     }

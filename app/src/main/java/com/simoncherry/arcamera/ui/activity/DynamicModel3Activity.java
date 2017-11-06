@@ -67,6 +67,8 @@ public class DynamicModel3Activity extends AppCompatActivity implements FrameCal
     private final static int VIDEO_HEIGHT = 640;
 
     private SurfaceView mSurfaceView;
+
+    int faceWidth, faceHeight, l, t, r, b;
     private TextView mTrackText, mActionText;
 
     private Context mContext;
@@ -108,7 +110,9 @@ public class DynamicModel3Activity extends AppCompatActivity implements FrameCal
     protected void setContentView(){
         setContentView(R.layout.activity_record_3d);
         mTrackText = (TextView) findViewById(R.id.tv_track);
+        mTrackText.setTextColor(0xFFFF0000);
         mActionText = (TextView) findViewById(R.id.tv_action);
+        mActionText.setTextColor(0xFFFF0000);
         mCapture = (CircularProgressView) findViewById(R.id.mCapture);
 
         mRenderSurface = (org.rajawali3d.view.SurfaceView) findViewById(R.id.rajwali_surface);
@@ -177,13 +181,30 @@ public class DynamicModel3Activity extends AppCompatActivity implements FrameCal
                                                 final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
                                                 final int headYaw, final int headPitch, final int browJump) {
                         setLandmarkFilter(faceActions, orientation, mouthAh);
+
+                        //luoyouren: show face rect
+                        if(faceActions.length > 0)
+                        {
+                            faceWidth = faceActions[0].getFace().getRect().width();
+                            faceHeight = faceActions[0].getFace().getRect().height();
+                            l = faceActions[0].getFace().getRect().left;
+                            t = faceActions[0].getFace().getRect().top;
+                            r = faceActions[0].getFace().getRect().right;
+                            b = faceActions[0].getFace().getRect().bottom;
+
+                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mTrackText.setText("TRACK: " + value + " MS"
                                         + "\nPITCH: " + pitch + "\nROLL: " + roll + "\nYAW: " + yaw + "\nEYE_DIST:" + eye_dist);
-                                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
-                                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+//                                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
+//                                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+
+                                //luoyouren: show face rect
+                                mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
+                                        "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
                             }
                         });
                     }

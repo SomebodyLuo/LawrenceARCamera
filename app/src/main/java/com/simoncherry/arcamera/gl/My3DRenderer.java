@@ -786,10 +786,28 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private void initOrnamentParams() {
         if (mObject3DList != null && mObject3DList.size() > 0) {
             for (Object3D object3D : mObject3DList) {
+                Log.i(TAG, "initOrnamentParams");
+                String modelName = mObject3DList.get(0).getName();
+                if((modelName != null) && (modelName.equals("ironManTop2")))
+                {
+                    Log.i(TAG, "123 initOrnamentParams");
+                    //            getCurrentScene().getCamera().setZ(5.5);	//original
+                    getCurrentCamera().setZ(105.5);
+                }
+                else
+                {
+                    getCurrentCamera().setZ(5.5);	//original
+                }
+
                 mContainer.addChild(object3D);
 
                 Geometry3D geometry3D = object3D.getGeometry();
                 mGeometry3DList.add(geometry3D);
+            }
+
+            if(mOrnamentModel.getType() == Ornament.MODEL_TYPE_POINT)
+            {
+                getCurrentCamera().setZ(105.5);
             }
         }
 

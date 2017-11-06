@@ -17,18 +17,19 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/iv_landmark"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="false"/>
-
     <org.rajawali3d.view.SurfaceView
         android:id="@+id/rajwali_surface"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         surfaceview:frameRate="30.0"
+        android:visibility="invisible"
         surfaceview:renderMode="RENDER_WHEN_DIRTY"/>
+
+    <ImageView
+        android:id="@+id/iv_landmark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"/>
 
     <ImageButton
         android:id="@+id/mShutter"

@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_dynamic_model).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(DynamicModel3Activity.class);
+                startActivity(DynamicModelActivity.class);
             }
         });
     }

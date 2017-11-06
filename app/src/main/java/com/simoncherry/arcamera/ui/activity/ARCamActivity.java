@@ -196,7 +196,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         initMenuButton();
         initCommonView();
 
-        initFacePoints();
+//        initFacePoints();
         initFilterSheet();
         initOrnamentSheet();
         initEffectSheet();
@@ -941,10 +941,10 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         // 处理人脸长方形
-        mPresenter.handelFacePoints(faceActions);
+//        mPresenter.handelFacePoints(faceActions);
 
         // 处理人脸关键点
-//        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         // 显示人脸检测的参数
         runOnUiThread(new Runnable() {

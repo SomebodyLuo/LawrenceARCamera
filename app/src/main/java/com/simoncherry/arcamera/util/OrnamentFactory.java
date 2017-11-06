@@ -65,13 +65,30 @@ public class OrnamentFactory {
         Ornament ornament = new Ornament();
 
         Ornament.Model model = new Ornament.Model();
-        model.setModelResId(R.raw.tiger_nose_obj);
-        model.setScale(0.002f);
-        model.setOffset(0, -0.2f, 0.4f);
-        model.setRotate(0.0f, 0.0f, 0.0f);
+//-------------------------------------------------------------------------------------------------------------
+//        model.setModelResId(R.raw.tiger_nose_obj);
+//        model.setScale(0.002f);
+//        model.setOffset(0, -0.2f, 0.4f);
+//        model.setRotate(0.0f, 0.0f, 0.0f);
+
+//-------------------------------------------------------------------------------------------------------------
+        model.setName("ironManTop2");
+        model.setModelResId(R.raw.ironman_mask_obj);
+        model.setScale(1.0f); //*********
+        model.setOffset(0, -30.5f, -10);
+        // for object pick
+        model.setNeedObjectPick(true);
+        model.setBeforeY(-0.5f);
+        model.setAfterY(-0.15f);
+        model.setBeforeZ(0);
+        model.setAfterZ(0.5f);
+        model.setAxisX(1);
+        model.setBeforeAngle(0);
+        model.setAfterAngle(40);
+//-------------------------------------------------------------------------------------------------------------
 
         ornament.setType(Ornament.MODEL_TYPE_STATIC);
-        ornament.setImgResId(R.drawable.ic_tiger);
+        ornament.setImgResId(R.drawable.ic_iron_man);
         List<Ornament.Model> modelList = new ArrayList<>();
         modelList.add(model);
         ornament.setModelList(modelList);
@@ -207,29 +224,9 @@ public class OrnamentFactory {
         ironManTop.setName("ironManTop");
 
 //-------------------------------------------------------------------------------------------------------------
-//        ironManTop.setModelResId(R.raw.iron_man_helmet_top_obj);
-//        ironManTop.setScale(0.75f);
-//        ironManTop.setOffset(0, -0.5f, 0);
-//        // for object pick
-//        ironManTop.setNeedObjectPick(true);
-//        ironManTop.setBeforeY(-0.5f);
-//        ironManTop.setAfterY(-0.15f);
-//        ironManTop.setBeforeZ(0);
-//        ironManTop.setAfterZ(0.5f);
-//        ironManTop.setAxisX(1);
-//        ironManTop.setBeforeAngle(0);
-//        ironManTop.setAfterAngle(40);
-//
-//        Ornament.Model ironManBottom = new Ornament.Model();
-//        ironManBottom.setName("ironManBottom");
-//        ironManBottom.setModelResId(R.raw.iron_man_helmet_bottom_obj);
-//        ironManBottom.setScale(0.75f);
-//        ironManBottom.setOffset(0, -0.5f, 0);
-
-//-------------------------------------------------------------------------------------------------------------
-        ironManTop.setModelResId(R.raw.ironman_mask_obj);
-        ironManTop.setScale(1.0f); //*********
-        ironManTop.setOffset(0, -30.5f, -10);
+        ironManTop.setModelResId(R.raw.iron_man_helmet_top_obj);
+        ironManTop.setScale(0.75f);
+        ironManTop.setOffset(0, -0.5f, 0);
         // for object pick
         ironManTop.setNeedObjectPick(true);
         ironManTop.setBeforeY(-0.5f);
@@ -242,9 +239,31 @@ public class OrnamentFactory {
 
         Ornament.Model ironManBottom = new Ornament.Model();
         ironManBottom.setName("ironManBottom");
-        ironManBottom.setModelResId(R.raw.ironman_mask_open_obj);
-        ironManBottom.setScale(1.0f);  //*********
-        ironManBottom.setOffset(0, -30.5f, -10);
+        ironManBottom.setModelResId(R.raw.iron_man_helmet_bottom_obj);
+        ironManBottom.setScale(0.75f);
+        ironManBottom.setOffset(0, -0.5f, 0);
+
+//-------------------------------------------------------------------------------------------------------------
+//        ironManTop.setModelResId(R.raw.ironman_mask_obj);
+//        ironManTop.setScale(1.0f); //*********
+//        ironManTop.setOffset(0, -30.5f, -10);
+//        // for object pick
+//        ironManTop.setNeedObjectPick(true);
+//        ironManTop.setBeforeY(-0.5f);
+//        ironManTop.setAfterY(-0.15f);
+//        ironManTop.setBeforeZ(0);
+//        ironManTop.setAfterZ(0.5f);
+//        ironManTop.setAxisX(1);
+//        ironManTop.setBeforeAngle(0);
+//        ironManTop.setAfterAngle(40);
+//
+//        Ornament.Model ironManBottom = new Ornament.Model();
+//        ironManBottom.setName("ironManBottom");
+//        ironManBottom.setModelResId(R.raw.ironman_mask_open_obj);
+//        ironManBottom.setScale(1.0f);  //*********
+//        ironManBottom.setOffset(0, -30.5f, -10);
+
+//-------------------------------------------------------------------------------------------------------------
 
         ornament.setType(Ornament.MODEL_TYPE_STATIC);
         ornament.setImgResId(R.drawable.ic_iron_man);
