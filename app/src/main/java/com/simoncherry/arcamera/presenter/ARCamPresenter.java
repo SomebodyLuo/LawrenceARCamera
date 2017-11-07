@@ -12,6 +12,7 @@ import com.sensetime.stmobileapi.STMobileFaceAction;
 import com.sensetime.stmobileapi.STUtils;
 import com.simoncherry.arcamera.contract.ARCamContract;
 import com.simoncherry.arcamera.model.DynamicPoint;
+import com.simoncherry.arcamera.ui.activity.ARCamActivity;
 import com.simoncherry.arcamera.util.FileUtils;
 
 import java.io.BufferedOutputStream;
@@ -141,36 +142,113 @@ public class ARCamPresenter implements ARCamContract.Presenter {
     public void handle3dModelTransition(STMobileFaceAction[] faceActions,
                                         int orientation, int eye_dist, float yaw,
                                         int previewWidth, int previewHeight) {
+        STMobileFaceAction faceAction = faceActions[0];
+
+//        boolean rotate270 = orientation == 270;
+//        Rect rect;
+//        if (rotate270) {
+//            rect = STUtils.RotateDeg270(r.getFace().getRect(), previewWidth, previewHeight);
+//        } else {
+//            rect = STUtils.RotateDeg90(r.getFace().getRect(), previewWidth, previewHeight);
+//        }
+//
+////        mView.onGetPointsPosition(rect);  //for face points
+//
+//        float centerX = (rect.right + rect.left) / 2.0f;
+//        float centerY = (rect.bottom + rect.top) / 2.0f;
+//        Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
+//
+//        float x = (centerX / previewHeight) * 2.0f - 1.0f;
+//        float y = (centerY / previewWidth) * 2.0f - 1.0f;
+////        float x = centerX - previewHeight / 2;
+////        float y = centerY - previewWidth / 2;
+//
+//        float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25； luoyouren: 注意25是经验值
+//
+//        tmp = (float) (tmp / Math.cos(Math.PI*yaw/180));  // 根据旋转角度还原两眼距离
+//
+//        tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1；         luoyouren: 还原后的两眼距离与标准距离25的比值，就是头盔的缩放比！！！
+//
+//        float z = tmp * 3.0f + 1.0f;
+//        Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
+
+        //==========================================================================================
+        float x, y;
+        PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
+        Rect rect = CalculateRectForPoints(pointFs);
+        x = rect.centerX();
+        y = rect.centerY();
+
+        mView.onGet3dModelTransition(x, y, 1.0f);
+    }
+
+    int PREVIEW_WIDTH = 640;
+    int PREVIEW_HEIGHT = 480;
+    public Rect preProcessRect(Rect rect, int orientation)
+    {
         boolean rotate270 = orientation == 270;
-        STMobileFaceAction r = faceActions[0];
-        Rect rect;
+        //=================================================长方形===================================
+        //----------当前对应图1
         if (rotate270) {
-            rect = STUtils.RotateDeg270(r.getFace().getRect(), previewWidth, previewHeight);
+            rect = STUtils.RotateDeg270(rect, PREVIEW_WIDTH, PREVIEW_HEIGHT);
         } else {
-            rect = STUtils.RotateDeg90(r.getFace().getRect(), previewWidth, previewHeight);
+            rect = STUtils.RotateDeg90(rect, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        }
+        //----------此时对应图2
+        if(mView.getCameraId() == 1) {
+            int left = rect.left;
+            rect.left = PREVIEW_HEIGHT - rect.right;
+            rect.right = PREVIEW_HEIGHT - left;
+        }
+        //----------此时对应图3
+
+        return rect;
+    }
+
+    public PointF[] preProcessPoints(PointF[] points, int orientation)
+    {
+        boolean rotate270 = orientation == 270;
+        //=================================================点集=====================================
+        //----------当前对应图1
+        int i;
+        for (i = 0; i < points.length; i++) {
+            if (rotate270) {
+                points[i] = STUtils.RotateDeg270(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
+            } else {
+                points[i] = STUtils.RotateDeg90(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
+            }
+        }
+        //----------此时对应图2
+        for (i = 0; i < points.length; i++) {
+            if(mView.getCameraId() == 1) {
+                points[i].x = PREVIEW_HEIGHT - points[i].x;
+            }
+        }
+        //----------此时对应图3
+
+        return points;
+    }
+
+    private Rect CalculateRectForPoints(PointF[] pointF)
+    {
+        if (pointF.length < 0)
+        {
+            return null;
         }
 
-//        mView.onGetPointsPosition(rect);  //for face points
+        float left = pointF[0].x, top = pointF[0].y, right = pointF[0].x, bottom = pointF[0].y;
+        for (PointF pointF1: pointF)
+        {
+            left = (left < pointF1.x) ? left : pointF1.x;
+            top = (top > pointF1.y) ? top : pointF1.y;
+            right = (right > pointF1.x) ? right : pointF1.x;
+            bottom = (bottom < pointF1.y) ? bottom : pointF1.y;
 
-        float centerX = (rect.right + rect.left) / 2.0f;
-        float centerY = (rect.bottom + rect.top) / 2.0f;
-        Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
+        }
 
-        float x = (centerX / previewHeight) * 2.0f - 1.0f;
-        float y = (centerY / previewWidth) * 2.0f - 1.0f;
-//        float x = centerX - previewHeight / 2;
-//        float y = centerY - previewWidth / 2;
-
-        float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25； luoyouren: 注意25是经验值
-
-        tmp = (float) (tmp / Math.cos(Math.PI*yaw/180));  // 根据旋转角度还原两眼距离
-
-        tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1；         luoyouren: 还原后的两眼距离与标准距离25的比值，就是头盔的缩放比！！！
-
-        float z = tmp * 3.0f + 1.0f;
-        Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
-
-        mView.onGet3dModelTransition(x, y, z);
+        Rect rect = new Rect((int)left, (int)top, (int)right, (int)bottom);
+        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
+        return rect;
     }
 
     // 处理人脸关键点

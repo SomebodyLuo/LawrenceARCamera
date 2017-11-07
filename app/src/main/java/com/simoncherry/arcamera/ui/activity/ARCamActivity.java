@@ -105,7 +105,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     protected TextureController mController;
     private MyRenderer mRenderer;
     // 相机Id，后置是0，前置是1
-    private int cameraId = 1;
+    public int cameraId = 1;
     // 默认的相机滤镜的Id
     protected int mCurrentFilterId = R.id.menu_camera_default;
     // 加速度计工具类，似乎是用于人脸检测的
@@ -773,6 +773,12 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     }
 
     @Override
+    public int getCameraId()
+    {
+        return cameraId;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (mController != null) {
@@ -953,15 +959,17 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
                                          final int headYaw, final int headPitch, final int browJump) {
         // 处理3D模型的旋转
-        mPresenter.handle3dModelRotation(pitch, roll, yaw);
+//        mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
         mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
-        // 处理人脸长方形
-//        mPresenter.handelFacePoints(faceActions);
+
 
         // 处理人脸关键点——>给面具使用
-        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+
+        //luoyouren: 处理人脸长方形
+//        mPresenter.handelFacePoints(faceActions);
 
         // 显示人脸检测的参数
         runOnUiThread(new Runnable() {

@@ -255,6 +255,7 @@ public class CameraTrackRenderer implements MyRenderer {
                         Log.i(TAG, "end time: " + endTime);
                         Log.i(TAG, "track time: " + trackTime);
 
+                        //luoyouren: 重点
                         if (faceActions != null && faceActions.length > 0) {
                             Log.i(TAG, "-->> faceActions: faceActions[0].face=" + faceActions[0].face.rect.toString() + ", " +
                                     "pitch = " + faceActions[0].face.pitch + ", " +

@@ -23,6 +23,8 @@ public interface ARCamContract {
         void onGetChangePoint(List<DynamicPoint> mDynamicPoints);
 
         void onGetPointsPosition(Rect rect);
+
+        int getCameraId();
     }
 
     interface Presenter {

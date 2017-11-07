@@ -166,11 +166,32 @@ public class STUtils {
 		int strokeWidth = Math.max(width / 240, 2);
 		paint.setStrokeWidth(strokeWidth);	//画笔宽度
 
-		if(frontCamera) {
-			int left = rect.left;
-			rect.left = width - rect.right;
-			rect.right = width - left;
-		}
+		//已经移到上一级函数
+//		if(frontCamera) {
+//			int left = rect.left;
+//			rect.left = width - rect.right;
+//			rect.right = width - left;
+//		}
+
+		paint.setStyle(Style.STROKE);
+		canvas.drawRect(rect, paint);
+	}
+
+	static public void drawFaceRect(int rgb, Canvas canvas, Rect rect, int width, int height, boolean frontCamera) {
+
+		if(canvas == null) return;
+
+		Paint paint = new Paint();
+		paint.setColor(rgb);
+		int strokeWidth = Math.max(width / 240, 2);
+		paint.setStrokeWidth(strokeWidth);	//画笔宽度
+
+		//已经移到上一级函数
+//		if(frontCamera) {
+//			int left = rect.left;
+//			rect.left = width - rect.right;
+//			rect.right = width - left;
+//		}
 
 		paint.setStyle(Style.STROKE);
 		canvas.drawRect(rect, paint);
@@ -189,20 +210,18 @@ public class STUtils {
 		if(canvas == null) return;
 
 		Paint paint = new Paint();
-		paint.setColor(Color.rgb(57, 138, 243));
+		paint.setColor(Color.YELLOW);
 		int strokeWidth = Math.max(width / 240, 2);
 		paint.setStrokeWidth(strokeWidth);
 		paint.setStyle(Style.STROKE);
 
-		int i = 0;
 		for (PointF point : points) {
 			PointF p = point;
-			if(frontCamera) {
-				p.x = width - p.x;
-			}
+//			if(frontCamera) {
+//				p.x = width - p.x;		//已经移到上一级函数
+//			}
 			canvas.drawPoint(p.x, p.y, paint);
 			//canvas.drawText(String.valueOf(i), p.x, p.y, paint);
-			i++;
 		}
 	}
 

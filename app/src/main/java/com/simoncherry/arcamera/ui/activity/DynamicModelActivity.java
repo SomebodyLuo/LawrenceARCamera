@@ -366,28 +366,73 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
             for (STMobileFaceAction r : faceActions) {
                 Log.i("Test", "-->> face count = "+faceActions.length);
                 Rect rect;
+
+                //=================================================长方形==============================================
+                //----------当前对应图1
                 if (rotate270) {
                     rect = STUtils.RotateDeg270(r.getFace().getRect(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
                 } else {
                     rect = STUtils.RotateDeg90(r.getFace().getRect(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
                 }
+                //----------此时对应图2
+                if(cameraId == 1) {
+                    int left = rect.left;
+                    rect.left = PREVIEW_HEIGHT - rect.right;
+                    rect.right = PREVIEW_HEIGHT - left;
+                }
+                //----------此时对应图3
 
+                //=================================================点集==============================================
+                //----------当前对应图1
+                int i = 0;
                 PointF[] points = r.getFace().getPointsArray();
-                for (int i = 0; i < points.length; i++) {
+                for (i = 0; i < points.length; i++) {
                     if (rotate270) {
                         points[i] = STUtils.RotateDeg270(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
                     } else {
                         points[i] = STUtils.RotateDeg90(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
                     }
                 }
-                STUtils.drawFaceRect(canvas, rect, PREVIEW_HEIGHT,
-                        PREVIEW_WIDTH, cameraId == 1);
-                STUtils.drawPoints(canvas, points, PREVIEW_HEIGHT,
-                        PREVIEW_WIDTH, cameraId == 1);
+                //----------此时对应图2
+                for (i = 0; i < points.length; i++) {
+                    if(cameraId == 1) {
+                        points[i].x = PREVIEW_HEIGHT - points[i].x;
+                    }
+                }
+                //----------此时对应图3
+
+                STUtils.drawFaceRect(canvas, rect, PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
+                STUtils.drawPoints(canvas, points, PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
+                STUtils.drawFaceRect(Color.GREEN, canvas, CalculateRectForPoints(points), PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
+
                 return bitmap;
             }
         }
         return null;
+    }
+
+    private Rect CalculateRectForPoints(PointF[] pointF)
+    {
+        if (pointF.length < 0)
+        {
+            return null;
+        }
+
+        float left = pointF[0].x, top = pointF[0].y, right = pointF[0].x, bottom = pointF[0].y;
+        for (PointF pointF1: pointF)
+        {
+            left = (left < pointF1.x) ? left : pointF1.x;
+            top = (top > pointF1.y) ? top : pointF1.y;
+            right = (right > pointF1.x) ? right : pointF1.x;
+            bottom = (bottom < pointF1.y) ? bottom : pointF1.y;
+
+        }
+
+        Rect rect = new Rect((int)left, (int)top, (int)right, (int)bottom);
+
+        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
+
+        return rect;
     }
 
     private void setLandmarkFilter(STMobileFaceAction[] faceActions, int orientation, int mouthAh) {
