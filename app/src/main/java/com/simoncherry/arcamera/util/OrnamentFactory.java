@@ -550,8 +550,8 @@ public class OrnamentFactory {
         ornament.setType(Ornament.MODEL_TYPE_DYNAMIC);
         ornament.setImgResId(imgResId);
         List<Ornament.Model> modelList = new ArrayList<>();
-        modelList.add(model);
         ornament.setModelList(modelList);
+        modelList.add(model);
         return ornament;
     }
 

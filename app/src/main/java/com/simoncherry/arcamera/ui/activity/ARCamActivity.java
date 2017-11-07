@@ -67,6 +67,8 @@ import org.rajawali3d.Object3D;
 import org.rajawali3d.renderer.ISurfaceRenderer;
 import org.rajawali3d.view.ISurface;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -179,7 +181,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = ARCamActivity.this;
-        mPresenter = new ARCamPresenter(this);
+        mPresenter = new ARCamPresenter(getApplicationContext(), this);
         // 用于人脸检测
         mAccelerometer = new Accelerometer(this);
         mAccelerometer.start();
@@ -399,6 +401,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                 mOrnamentSheet.dismiss();
                 Ornament ornament = mOrnaments.get(position);
                 if (position == 0) ornament = null;
+
+                //更换面具/头盔
                 ((My3DRenderer) mISurfaceRenderer).setOrnamentModel(ornament);
                 ((My3DRenderer) mISurfaceRenderer).setIsNeedUpdateOrnament(true);
                 if (ornament != null) {
@@ -593,10 +597,23 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         loadLocalImage();
     }
 
+    protected String getModelPath(String modelName) {
+        String path = null;
+        File dataDir = mContext.getApplicationContext().getExternalFilesDir(null);
+        if (dataDir != null) {
+            path = dataDir.getAbsolutePath() + File.separator + modelName;
+        }
+        return path;
+    }
+
     // 初始化的Runnable
     private Runnable initViewRunnable = new Runnable() {
         @Override
         public void run() {
+
+
+
+
             mExecutor = Executors.newSingleThreadExecutor();
             mController = new TextureController(mContext);
             // 设置数据源
@@ -943,7 +960,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理人脸长方形
 //        mPresenter.handelFacePoints(faceActions);
 
-        // 处理人脸关键点
+        // 处理人脸关键点——>给面具使用
         mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         // 显示人脸检测的参数

@@ -12,15 +12,21 @@ import com.sensetime.stmobileapi.STMobileFaceAction;
 import com.sensetime.stmobileapi.STUtils;
 import com.simoncherry.arcamera.contract.ARCamContract;
 import com.simoncherry.arcamera.model.DynamicPoint;
+import com.simoncherry.arcamera.util.FileUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.media.MediaScannerConnection;
 
 /**
  * Created by Simon on 2017/7/19.
@@ -32,8 +38,13 @@ public class ARCamPresenter implements ARCamContract.Presenter {
     private Context mContext;
     private ARCamContract.View mView;
     private List<DynamicPoint> mDynamicPoints;
+    private boolean isDebug = false;
 
-    public ARCamPresenter(ARCamContract.View mView) {
+
+    long time = 0;
+
+    public ARCamPresenter(Context context, ARCamContract.View mView) {
+        this.mContext = context;
         this.mView = mView;
         mDynamicPoints = new ArrayList<>();
     }
@@ -168,24 +179,97 @@ public class ARCamPresenter implements ARCamContract.Presenter {
                                    int previewWidth, int previewHeight) {
         boolean rotate270 = orientation == 270;
         if (faceActions != null && faceActions.length > 0) {
+            Log.i(TAG, "-->> face count = " + faceActions.length);
+
             STMobileFaceAction faceAction = faceActions[0];
-            Log.i("Test", "-->> face count = "+faceActions.length);
+
+            //获取人脸检测结果点
             PointF[] points = faceAction.getFace().getPointsArray();
+            Log.i(TAG, "-->> points count = " + points.length);
             float[] landmarkX = new float[points.length];
             float[] landmarkY = new float[points.length];
-            for (int i = 0; i < points.length; i++) {
-                if (rotate270) {
-                    points[i] = STUtils.RotateDeg270(points[i], previewWidth, previewHeight);
-                } else {
-                    points[i] = STUtils.RotateDeg90(points[i], previewWidth, previewHeight);
+
+            String path1 = null;
+            String path2 = null;
+            String path3 = null;
+            FileWriter fw1 = null;
+            FileWriter fw2 = null;
+            FileWriter fw3 = null;
+            if (isDebug) {
+                time = System.currentTimeMillis();
+                path1 = getModelPath(time + "-points1.txt");
+                path2 = getModelPath(time + "-points2.txt");
+                path3 = getModelPath(time + "-points3.txt");
+                Log.d(TAG, "luo: path1 = " + path1);
+            }
+            try {
+                if (isDebug) {
+                    fw1 = new FileWriter(path1);
+                    fw2 = new FileWriter(path2);
+                    fw3 = new FileWriter(path3);
+//                fw.write("fuck you\n");
                 }
 
-                landmarkX[i] = 1 - points[i].x / 480.0f;
-                landmarkY[i] = points[i].y / 640.0f;
+                Log.d(TAG, "0: handleFaceLandmark: "+ "previewWidth = " + previewWidth + ";previewHeight = " + previewHeight);
+                for (int i = 0; i < points.length; i++) {
+
+                    Log.d(TAG, "1: handleFaceLandmark: "+ "points[i].x = " + points[i].x + ";points[i].y = " + points[i].y);
+                    if (isDebug) {
+                        fw1.write("" + points[i].x + "\t" + points[i].y + "\n");
+                    }
+
+                    if (rotate270) {
+                        points[i] = STUtils.RotateDeg270(points[i], previewWidth, previewHeight);
+                    } else {
+                        points[i] = STUtils.RotateDeg90(points[i], previewWidth, previewHeight);
+                    }
+                    Log.d(TAG, "2: handleFaceLandmark: "+ "points[i].x = " + points[i].x + ";points[i].y = " + points[i].y);
+
+                    if (isDebug) {
+                        fw2.write("" + points[i].x + "\t" + points[i].y + "\n");
+                    }
+
+                    landmarkX[i] = 1 - points[i].x / 480.0f;
+                    landmarkY[i] = points[i].y / 640.0f;
+                    Log.d(TAG, "3: handleFaceLandmark: "+ "landmarkX[i] = " + landmarkX[i] + ";landmarkY[i] = " + landmarkY[i] + "\n\n");
+
+                    if (isDebug) {
+                        fw3.write("" + landmarkX[i] + "\t" + landmarkY[i] + "\n");
+                    }
+                }
+
+                if (isDebug) {
+                    fw1.flush();
+                    fw1.close();
+
+                    fw2.flush();
+                    fw2.close();
+
+                    fw3.flush();
+                    fw3.close();
+                }
+            } catch (IOException e) {
+            }
+
+            if (isDebug) {
+                String paths[] = new String[3];
+                paths[0] = path1;
+                paths[1] = path2;
+                paths[2] = path3;
+                MediaScannerConnection.scanFile(mContext, paths, null, null);
             }
 
             mView.onGetFaceLandmark(landmarkX, landmarkY, mouthAh);
         }
+    }
+
+    protected String getModelPath(String modelName) {
+        String path = null;
+        File dataDir = mContext.getApplicationContext().getExternalFilesDir(null);
+        if (dataDir != null) {
+            path = dataDir.getAbsolutePath() + File.separator + modelName;
+        }
+        return path;
     }
 
     @Override
@@ -193,11 +277,46 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         mDynamicPoints.clear();
 
         int length = landmarkX.length;
-        for (int i=0; i<length; i++) {
-            landmarkX[i] = (landmarkX[i] * 2f - 1f) * 7f;
-            landmarkY[i] = ((1-landmarkY[i]) * 2f - 1f) * 9.3f;
+
+        String path4 = null;
+        FileWriter fw4 = null;
+        String path5 = null;
+        FileWriter fw5 = null;
+        if(isDebug) {
+            path4 = getModelPath(time + "-points4.txt");
+            Log.d(TAG, "luo: path4 = " + path4);
+        }
+        try {
+            if (isDebug) {
+                fw4 = new FileWriter(path4);
+            }
+
+            for (int i=0; i<length; i++) {
+                Log.d(TAG, "1: handleChangeModel: "+ "landmarkX[i] = " + landmarkX[i] + ";landmarkY[i] = " + landmarkY[i]);
+                landmarkX[i] = (landmarkX[i] * 2f - 1f) * 7f;
+                landmarkY[i] = ((1-landmarkY[i]) * 2f - 1f) * 9.3f;
+                Log.d(TAG, "2: handleChangeModel: "+ "landmarkX[i] = " + landmarkX[i] + ";landmarkY[i] = " + landmarkY[i]);
+                if (isDebug) {
+                    fw4.write("" + landmarkX[i] + "\t" + landmarkY[i] + "\n");
+                }
+            }
+
+            if (isDebug) {
+                fw4.flush();
+                fw4.close();
+            }
+        } catch (IOException e) {
         }
 
+        if (isDebug) {
+            String paths[] = new String[1];
+            paths[0] = path4;
+            MediaScannerConnection.scanFile(mContext, paths, null, null);
+        }
+
+        //luoyouren: 总共44个点，跟base_face_uv3_obj保持一致
+        //把人脸检测结果中的106点数据，重新拟合到模型的44个区域上面
+        //下面的每一个序号，比如29/15，都是代表模型上面的某一个切片的面上面的点集
         // 额头
         mDynamicPoints.add(new DynamicPoint(29, landmarkX[41], landmarkY[41], 0.0f));
         mDynamicPoints.add(new DynamicPoint(15, landmarkX[39], landmarkY[39], 0.0f));
@@ -250,6 +369,27 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         mDynamicPoints.add(new DynamicPoint(7, landmarkX[102], landmarkY[102], 0.0f));
         mDynamicPoints.add(new DynamicPoint(39, landmarkX[101], landmarkY[101], 0.0f));
         mDynamicPoints.add(new DynamicPoint(8, landmarkX[93], landmarkY[93], 0.0f));
+
+
+        if (isDebug) {
+            path5 = getModelPath(time + "-points5.txt");
+            Log.d(TAG, "luo: path5 = " + path5);
+        try {
+                fw5 = new FileWriter(path5);
+
+            for (DynamicPoint dynamicPoint: mDynamicPoints) {
+                fw5.write("" + dynamicPoint.getX()+ "\t" + dynamicPoint.getY() + "\n");
+            }
+
+                fw5.flush();
+                fw5.close();
+        } catch (IOException e) {
+        }
+
+            String paths2[] = new String[1];
+            paths2[0] = path5;
+            MediaScannerConnection.scanFile(mContext, paths2, null, null);
+        }
 
         mView.onGetChangePoint(mDynamicPoints);
     }

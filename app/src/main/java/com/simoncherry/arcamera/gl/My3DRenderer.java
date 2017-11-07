@@ -288,12 +288,18 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
         } else if (mModelType == Ornament.MODEL_TYPE_DYNAMIC) {
             if (!mIsChanging && mPoints != null && mPoints.size() > 0) {
-                mIsChanging = true;
+                mIsChanging = true; //正在渲染不允许修改点集
 
+                //专门渲染面具
                 try {  // FIXME
                     if (mGeometry3DList != null && mGeometry3DList.size() > 0) {
+
+                        //mGeometry3DList是模型的点集，mPoints是人脸检测处理后的点集
+                        Log.d(TAG, "MODEL_TYPE_DYNAMIC: "+ "mGeometry3DList.size() = " + mGeometry3DList.size() + "; mPoints.size() = "+ mPoints.size());
+                        Log.d(TAG, "MODEL_TYPE_DYNAMIC: " + mGeometry3DList.get(0).getVertexBufferInfo().toString());
                         for (Geometry3D geometry3D : mGeometry3DList) {
                             FloatBuffer vertBuffer = geometry3D.getVertices();
+                            Log.d(TAG, "MODEL_TYPE_DYNAMIC: vertBuffer.limit() = " + vertBuffer.limit());
                             for (int i = 0; i < mPoints.size(); i++) {
                                 DynamicPoint point = mPoints.get(i);
                                 changePoint(vertBuffer, point.getIndex(), point.getX(), point.getY(), point.getZ());
@@ -309,7 +315,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 mIsChanging = false;
             }
         } else if (mModelType == Ornament.MODEL_TYPE_POINT) {
-
+            //luoyouren: add
             if ((mOrnamentModel != null) && (mRect != null)) {
                 List<Object3D> points = mOrnamentModel.getObject3DList();
                 if (points.size() >= 4) {
@@ -574,6 +580,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private void loadNormalMaterialModel() {
         try {
             List<Ornament.Model> modelList = mOrnamentModel.getModelList();
+            Log.i(TAG, "modelList.size = " + modelList.size());
             if (modelList != null && modelList.size() > 0) {
                 for (Ornament.Model model : modelList) {
                     String texturePath = model.getTexturePath();
@@ -785,8 +792,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
     private void initOrnamentParams() {
         if (mObject3DList != null && mObject3DList.size() > 0) {
+            Log.i(TAG, "initOrnamentParams: mObject3DList.size() = " + mObject3DList.size());
             for (Object3D object3D : mObject3DList) {
-                Log.i(TAG, "initOrnamentParams");
                 String modelName = mObject3DList.get(0).getName();
                 if((modelName != null) && (modelName.equals("ironManTop2")))
                 {
@@ -895,11 +902,11 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     }
 
     private void changePoint(FloatBuffer vertBuffer, int faceIndex, float x, float y, float z) {
-        int[] indices = getIndexArrayByFace(faceIndex);
+        int[] indices = getIndexArrayByFace(faceIndex); //根据序号，取出某个切片面上面的点集，进行统一的坐标偏移操作
         if (indices != null) {
             int len = indices.length;
             for (int i=0; i<len; i++) {
-                int index = indices[i]-1;
+                int index = indices[i]-1;   //为什么有那么多点要操作？
                 vertBuffer.put(index * 3, x);
                 vertBuffer.put(index * 3 + 1, y);
                 vertBuffer.put(index * 3 + 2, z);
