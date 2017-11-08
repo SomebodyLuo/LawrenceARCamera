@@ -72,6 +72,7 @@ public class OrnamentFactory {
 //        model.setRotate(0.0f, 0.0f, 0.0f);
 
 //-------------------------------------------------------------------------------------------------------------
+        /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
         model.setName("ironManTop2");
         model.setModelResId(R.raw.ironman_mask_obj);
         model.setScale(0.04f); //*********

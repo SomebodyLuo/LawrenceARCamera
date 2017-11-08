@@ -267,6 +267,12 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                     {
                         //钢铁侠先不进行缩放
                         Log.i(TAG, "123 initOrnamentParams");
+
+                        // 处理3D模型的缩放
+//                        mContainer.setScale(mScale);
+
+                        // 通过移动Z轴来实现缩放
+                        mContainer.setZ(mScale);
                     }
                     else
                     {
@@ -279,7 +285,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                     // 处理3D模型的平移
 //                    getCurrentCamera().setX(mTransX);
 //                    getCurrentCamera().setY(mTransY);
-                    //换一种方法移动物体
+                    //换一种方法移动3D模型
                     mContainer.setX(mTransX);
                     mContainer.setY(mTransY);
                 }

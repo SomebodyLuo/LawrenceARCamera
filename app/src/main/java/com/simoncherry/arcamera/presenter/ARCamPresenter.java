@@ -42,6 +42,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
     private boolean isDebug = false;
 
 
+
     long time = 0;
 
     public ARCamPresenter(Context context, ARCamContract.View mView) {
@@ -137,6 +138,8 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //        mView.onGetPointsPosition(faceActions[0].getFace().getRect());
     }
 
+    private float mStandardArea = 11877.0f;
+
     // 处理3D模型的平移
     @Override
     public void handle3dModelTransition(STMobileFaceAction[] faceActions,
@@ -185,7 +188,8 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             x = rect.centerX();
             y = rect.centerY();
 
-            //根据excel表格拟合出来的表达式
+            //================================将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
+            //根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y
             float x1, y1;
 //            x1 = -0.0292f * y + 7f;
 //            y1 = 0.0291f * x - 9.3f;
@@ -195,10 +199,27 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             y1 = -0.0292f * y + 5.0f;
             y1 = y1 / 3.8f;
 
+            Log.i(TAG, "luoyouren: rect.width() = " + rect.width() + "; rect.height()" + rect.height() +"; rect.area = " + rect.width() * rect.height() + "; x1 =" + x1 + "; y1 = " + y1);
 
-            Log.i(TAG, "--------------------------------------------------------------------------x1 =" + x1 + "; y1 = " + y1);
+            //================================ z轴说明的是人脸的大小，即人脸离手机的距离=======================================
+            //下面通过人脸的大小缩放比来确定Scale的参数
+            /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+            float area = rect.width() * rect.height();
+            float z;
+            if (true) {
+                //平方关系
+                z = 5.5f * 5.5f * mStandardArea / area;
+                // 依据: (l x h) / (L x H) = D^2 / d^2;
+                z = 5.5f - (float) Math.sqrt((double) z);
+            }else
+            {
+                //线性关系
+                z = - mStandardArea / area;
+            }
 
-            mView.onGet3dModelTransition(x1, y1, 1.0f);
+            Log.i(TAG, "luoyouren: scale z =  " + z);
+
+            mView.onGet3dModelTransition(x1, y1, z);
         }
     }
 
@@ -260,14 +281,16 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         for (PointF pointF1: pointF)
         {
             left = (left < pointF1.x) ? left : pointF1.x;
-            top = (top > pointF1.y) ? top : pointF1.y;
+            top = (top < pointF1.y) ? top : pointF1.y;
             right = (right > pointF1.x) ? right : pointF1.x;
-            bottom = (bottom < pointF1.y) ? bottom : pointF1.y;
+            bottom = (bottom > pointF1.y) ? bottom : pointF1.y;
 
         }
 
         Rect rect = new Rect((int)left, (int)top, (int)right, (int)bottom);
-//        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
+        Log.i(TAG, "-----------------left = " + left + "; right = " + right + "; top = " + top + "; bottom = " + bottom);
+
+        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
         return rect;
     }
 
