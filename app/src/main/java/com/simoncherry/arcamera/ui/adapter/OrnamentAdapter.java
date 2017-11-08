@@ -70,7 +70,7 @@ public class OrnamentAdapter extends RecyclerView.Adapter<OrnamentAdapter.MyView
         void onItemClick(int position);
     }
 
-    private OnItemClickListener onItemClickListener;
+    public OnItemClickListener onItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;

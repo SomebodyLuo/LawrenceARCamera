@@ -250,6 +250,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         });
 
         // 拍照时，先取Rajawali的帧数据，转成Bitmap待用；再取相机预览的帧数据，最后合成
+        // OpenGL截图
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setOnTakeScreenshotListener(new org.rajawali3d.view.SurfaceView.OnTakeScreenshotListener() {
             @Override
             public void onTakeScreenshot(Bitmap bitmap) {
@@ -295,6 +296,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                     case MotionEvent.ACTION_UP:
                         recordFlag = false;
                         // 短按拍照
+                        // OpenGL截图
                         if(System.currentTimeMillis() - time < 500){
                             mFrameType = TYPE_PHOTO;
                             mCapture.removeCallbacks(captureTouchRunnable);
@@ -431,6 +433,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mOrnaments.addAll(OrnamentFactory.getPresetOrnament());
         mOrnaments.addAll(OrnamentFactory.getPresetMask());
         mOrnamentAdapter.notifyDataSetChanged();
+
+        mOrnamentAdapter.onItemClickListener.onItemClick(1);
     }
 
     private void handleSkinColor(Ornament ornament) {

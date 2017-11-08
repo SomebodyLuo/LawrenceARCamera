@@ -173,7 +173,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             float z = tmp * 3.0f + 1.0f;
             Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
 
-            mView.onGet3dModelTransition(x, y, z);
+            mView.onGet3dModelTransition(-x, -y, z);
 
         }
 
@@ -187,12 +187,18 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
             //根据excel表格拟合出来的表达式
             float x1, y1;
-            x1 = -0.0292f * y + 7f;
-            y1 = 0.0291f * x - 9.3f;
+//            x1 = -0.0292f * y + 7f;
+//            y1 = 0.0291f * x - 9.3f;
+
+            x1 = 0.0291f * x - 7.0f;
+            x1 = x1 / 3.8f;
+            y1 = -0.0292f * y + 5.0f;
+            y1 = y1 / 3.8f;
+
 
             Log.i(TAG, "--------------------------------------------------------------------------x1 =" + x1 + "; y1 = " + y1);
 
-            mView.onGet3dModelTransition(y1, x1, 1.0f);
+            mView.onGet3dModelTransition(x1, y1, 1.0f);
         }
     }
 
