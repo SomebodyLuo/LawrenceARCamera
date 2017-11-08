@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="E:\PacificFuture\src\ARCamera-master\rajawali\src\main\jniLibs"/></dataSet><dataSet config="release"><source path="E:\PacificFuture\src\ARCamera-master\rajawali\src\release\jniLibs"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="E:\PacificFuture\github\LawrenceARCamera\rajawali\src\main\jniLibs"/></dataSet><dataSet config="release"><source path="E:\PacificFuture\github\LawrenceARCamera\rajawali\src\release\jniLibs"/></dataSet></merger>

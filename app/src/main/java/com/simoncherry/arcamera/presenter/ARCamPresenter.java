@@ -144,42 +144,56 @@ public class ARCamPresenter implements ARCamContract.Presenter {
                                         int previewWidth, int previewHeight) {
         STMobileFaceAction faceAction = faceActions[0];
 
-//        boolean rotate270 = orientation == 270;
-//        Rect rect;
-//        if (rotate270) {
-//            rect = STUtils.RotateDeg270(r.getFace().getRect(), previewWidth, previewHeight);
-//        } else {
-//            rect = STUtils.RotateDeg90(r.getFace().getRect(), previewWidth, previewHeight);
-//        }
-//
-////        mView.onGetPointsPosition(rect);  //for face points
-//
-//        float centerX = (rect.right + rect.left) / 2.0f;
-//        float centerY = (rect.bottom + rect.top) / 2.0f;
-//        Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
-//
-//        float x = (centerX / previewHeight) * 2.0f - 1.0f;
-//        float y = (centerY / previewWidth) * 2.0f - 1.0f;
-////        float x = centerX - previewHeight / 2;
-////        float y = centerY - previewWidth / 2;
-//
-//        float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25； luoyouren: 注意25是经验值
-//
-//        tmp = (float) (tmp / Math.cos(Math.PI*yaw/180));  // 根据旋转角度还原两眼距离
-//
-//        tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1；         luoyouren: 还原后的两眼距离与标准距离25的比值，就是头盔的缩放比！！！
-//
-//        float z = tmp * 3.0f + 1.0f;
-//        Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
+        if (false) {
+            boolean rotate270 = orientation == 270;
+            Rect rect;
+            if (rotate270) {
+                rect = STUtils.RotateDeg270(faceAction.getFace().getRect(), previewWidth, previewHeight);
+            } else {
+                rect = STUtils.RotateDeg90(faceAction.getFace().getRect(), previewWidth, previewHeight);
+            }
+
+//        mView.onGetPointsPosition(rect);  //for face points
+
+            float centerX = (rect.right + rect.left) / 2.0f;
+            float centerY = (rect.bottom + rect.top) / 2.0f;
+            Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
+
+            float x = (centerX / previewHeight) * 2.0f - 1.0f;
+            float y = (centerY / previewWidth) * 2.0f - 1.0f;
+//        float x = centerX - previewHeight / 2;
+//        float y = centerY - previewWidth / 2;
+
+            float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25； luoyouren: 注意25是经验值
+
+            tmp = (float) (tmp / Math.cos(Math.PI * yaw / 180));  // 根据旋转角度还原两眼距离
+
+            tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1；         luoyouren: 还原后的两眼距离与标准距离25的比值，就是头盔的缩放比！！！
+
+            float z = tmp * 3.0f + 1.0f;
+            Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
+
+            mView.onGet3dModelTransition(x, y, z);
+
+        }
 
         //==========================================================================================
-        float x, y;
-        PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
-        Rect rect = CalculateRectForPoints(pointFs);
-        x = rect.centerX();
-        y = rect.centerY();
+        else {
+            float x, y;
+            PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
+            Rect rect = CalculateRectForPoints(pointFs);
+            x = rect.centerX();
+            y = rect.centerY();
 
-        mView.onGet3dModelTransition(x, y, 1.0f);
+            //根据excel表格拟合出来的表达式
+            float x1, y1;
+            x1 = -0.0292f * y + 7f;
+            y1 = 0.0291f * x - 9.3f;
+
+            Log.i(TAG, "--------------------------------------------------------------------------x1 =" + x1 + "; y1 = " + y1);
+
+            mView.onGet3dModelTransition(y1, x1, 1.0f);
+        }
     }
 
     int PREVIEW_WIDTH = 640;
@@ -247,7 +261,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         }
 
         Rect rect = new Rect((int)left, (int)top, (int)right, (int)bottom);
-        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
+//        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
         return rect;
     }
 
@@ -296,11 +310,13 @@ public class ARCamPresenter implements ARCamContract.Presenter {
                         fw1.write("" + points[i].x + "\t" + points[i].y + "\n");
                     }
 
+                    //此时对应图1
                     if (rotate270) {
                         points[i] = STUtils.RotateDeg270(points[i], previewWidth, previewHeight);
                     } else {
                         points[i] = STUtils.RotateDeg90(points[i], previewWidth, previewHeight);
                     }
+                    //此时对应图2
                     Log.d(TAG, "2: handleFaceLandmark: "+ "points[i].x = " + points[i].x + ";points[i].y = " + points[i].y);
 
                     if (isDebug) {
@@ -309,6 +325,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
                     landmarkX[i] = 1 - points[i].x / 480.0f;
                     landmarkY[i] = points[i].y / 640.0f;
+                    //此时对应图3
                     Log.d(TAG, "3: handleFaceLandmark: "+ "landmarkX[i] = " + landmarkX[i] + ";landmarkY[i] = " + landmarkY[i] + "\n\n");
 
                     if (isDebug) {

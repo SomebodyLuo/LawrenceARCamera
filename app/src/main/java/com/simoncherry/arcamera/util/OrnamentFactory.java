@@ -74,17 +74,18 @@ public class OrnamentFactory {
 //-------------------------------------------------------------------------------------------------------------
         model.setName("ironManTop2");
         model.setModelResId(R.raw.ironman_mask_obj);
-        model.setScale(1.0f); //*********
-        model.setOffset(0, -30.5f, -10);
+        model.setScale(0.04f); //*********
+        model.setOffset(0, 0f, 0.0f);
+        model.setRotate(0, 0, 0);
         // for object pick
-        model.setNeedObjectPick(true);
-        model.setBeforeY(-0.5f);
-        model.setAfterY(-0.15f);
-        model.setBeforeZ(0);
-        model.setAfterZ(0.5f);
-        model.setAxisX(1);
-        model.setBeforeAngle(0);
-        model.setAfterAngle(40);
+//        model.setNeedObjectPick(true);
+//        model.setBeforeY(-0.5f);
+//        model.setAfterY(-0.15f);
+//        model.setBeforeZ(0);
+//        model.setAfterZ(0.5f);
+//        model.setAxisX(1);
+//        model.setBeforeAngle(0);
+//        model.setAfterAngle(40);
 //-------------------------------------------------------------------------------------------------------------
 
         ornament.setType(Ornament.MODEL_TYPE_STATIC);

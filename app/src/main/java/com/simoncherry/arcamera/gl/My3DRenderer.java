@@ -262,14 +262,26 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 }
 
                 if (mOrnamentModel.isEnableScale()) {
-                    // 处理3D模型的缩放
-                    mContainer.setScale(mScale);
+                    String modelName = mObject3DList.get(0).getName();
+                    if((modelName != null) && (modelName.equals("ironManTop2")))
+                    {
+                        //钢铁侠先不进行缩放
+                        Log.i(TAG, "123 initOrnamentParams");
+                    }
+                    else
+                    {
+                        // 处理3D模型的缩放
+                        mContainer.setScale(mScale);
+                    }
                 }
 
                 if (mOrnamentModel.isEnableTransition()) {
                     // 处理3D模型的平移
-                    getCurrentCamera().setX(mTransX);
-                    getCurrentCamera().setY(mTransY);
+//                    getCurrentCamera().setX(mTransX);
+//                    getCurrentCamera().setY(mTransY);
+                    //换一种方法移动物体
+                    mContainer.setX(mTransX);
+                    mContainer.setY(mTransY);
                 }
             }
 
@@ -798,8 +810,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 if((modelName != null) && (modelName.equals("ironManTop2")))
                 {
                     Log.i(TAG, "123 initOrnamentParams");
-                    //            getCurrentScene().getCamera().setZ(5.5);	//original
-                    getCurrentCamera().setZ(105.5);
+                    getCurrentScene().getCamera().setZ(5.5);	//original 重新调整视窗
+//                    getCurrentCamera().setZ(105.5);
                 }
                 else
                 {
