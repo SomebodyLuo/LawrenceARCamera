@@ -25,6 +25,7 @@ public interface ARCamContract {
         void onGetPointsPosition(Rect rect);
 
         int getCameraId();
+        void setViewShow(int show);
     }
 
     interface Presenter {

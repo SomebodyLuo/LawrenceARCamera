@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.media.MediaScannerConnection;
+import android.view.View;
 
 /**
  * Created by Simon on 2017/7/19.
@@ -188,8 +189,8 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             x = rect.centerX();
             y = rect.centerY();
 
-            //================================将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
-            //根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y
+            //================================平移调整：将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
+            //根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y，
             float x1, y1;
 //            x1 = -0.0292f * y + 7f;
 //            y1 = 0.0291f * x - 9.3f;
@@ -201,13 +202,13 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
             Log.i(TAG, "luoyouren: rect.width() = " + rect.width() + "; rect.height()" + rect.height() +"; rect.area = " + rect.width() * rect.height() + "; x1 =" + x1 + "; y1 = " + y1);
 
-            //================================ z轴说明的是人脸的大小，即人脸离手机的距离=======================================
+            //================================缩放调整：z轴说明的是人脸的大小，即人脸离手机的距离=======================================
             //下面通过人脸的大小缩放比来确定Scale的参数
             /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
             float area = rect.width() * rect.height();
             float z;
             if (true) {
-                //平方关系
+                //平方关系: 比较合适
                 z = 5.5f * 5.5f * mStandardArea / area;
                 // 依据: (l x h) / (L x H) = D^2 / d^2;
                 z = 5.5f - (float) Math.sqrt((double) z);
@@ -217,7 +218,62 @@ public class ARCamPresenter implements ARCamContract.Presenter {
                 z = - mStandardArea / area;
             }
 
-            Log.i(TAG, "luoyouren: scale z =  " + z);
+//            if (z < -2.0f)
+//            {
+//                mView.setViewShow(View.INVISIBLE);
+//            }
+//            else
+//            {
+//                mView.setViewShow(View.VISIBLE);
+//            }
+
+            //================================用缩放修正平移：现在开始做修正工作，利用Z轴去修正X / Y轴 =======================================
+            Log.i(TAG, "luoyouren: ------------------------------------------------------------------------------------- scale z =  " + z);
+
+            //----------修正Y轴----------
+            if (z > 0)  //分别修正
+            {
+                //1. 首先当人脸Y坐标不动时，Z轴如何修正平移
+                y1 = y1 + 0.25f * z;    //1. 首先当人脸Y坐标不动时，Z轴如何修正平移  ~
+//                y1 = y1 + 0.15f * z;
+                //2. 再移动人脸Y坐标，找修正
+//                y1 = y1 + (0.0365f * y1 + 0.0595f);           //
+//                y1 = y1 - (0.465f * y1 + 0.695f);             //
+                y1 = y1 - (0.205f * y1 + 0.395f);               //~
+
+                //3. 最后用Z轴再次修正平移
+//                y1 = y1 - (0.28f * z - 0.25f);        //
+//                y1 = y1 - 0.01f * (z - 2.13f);        //
+                y1 = y1 - 0.25f * (z - 1.03f);          // ~
+
+            } else {
+                //1. 首先当人脸Y坐标不动时，Z轴如何修正平移
+
+                //2. 再移动人脸Y坐标，找修正
+//                y1 = y1 - 0.08f * z;              //注意z是负的  ~
+                y1 = y1 + 0.20f * (y1 + 1.3f);      //注意z是负的  ~
+
+//                if (y1 > -1.3f) {
+//                    //2. 再移动人脸Y坐标，找修正
+////                y1 = y1 - 0.08f * z;              //注意z是负的  ~
+//                    y1 = y1 + 0.20f * (y1 + 1.3f);      //注意z是负的  ~
+//
+//                    //3. 最后用Z轴再次修正平移
+//                    y1 = y1 - 0.25f * (z + 1.50f);
+//                } else {
+                    //2. 再移动人脸Y坐标，找修正
+//                    y1 = y1 + 0.20f * (y1 + 1.3f);      //注意z是负的  ~
+//                }
+            }
+
+            //-----------修正X轴-----------
+//            if (z > 0)  //分别修正
+//            {
+//                x1 = x1 + 0.25f * z;
+//            } else {
+//                x1 = x1 + 0.08f * z;        //注意z是负的
+//            }
+            //==============================================================================================================================
 
             mView.onGet3dModelTransition(x1, y1, z);
         }
@@ -288,9 +344,9 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         }
 
         Rect rect = new Rect((int)left, (int)top, (int)right, (int)bottom);
-        Log.i(TAG, "-----------------left = " + left + "; right = " + right + "; top = " + top + "; bottom = " + bottom);
+//        Log.i(TAG, "-----------------left = " + left + "; right = " + right + "; top = " + top + "; bottom = " + bottom);
 
-        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
+//        Log.i(TAG, "--------------------------------------------------------------------------centerX =" + rect.centerX() + "; centerY = " + rect.centerY());
         return rect;
     }
 

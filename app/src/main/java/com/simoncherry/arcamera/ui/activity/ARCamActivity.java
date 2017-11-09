@@ -783,6 +783,15 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     }
 
     @Override
+    public void setViewShow(int show)
+    {
+        if (mRenderSurface != null) {
+            ((org.rajawali3d.view.SurfaceView) mRenderSurface).setVisibility(show);
+            ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (mController != null) {
