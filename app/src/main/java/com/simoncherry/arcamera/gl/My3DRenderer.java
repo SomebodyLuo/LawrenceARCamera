@@ -286,8 +286,14 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    getCurrentCamera().setX(mTransX);
 //                    getCurrentCamera().setY(mTransY);
                     //换一种方法移动3D模型
-                    mContainer.setX(mTransX);
-                    mContainer.setY(mTransY);
+//                    mContainer.setX(mTransX);
+//                    mContainer.setY(mTransY);
+
+                    //UnProjection
+                    if (mContainer.getChildAt(0) != null)
+                    {
+                        mContainer.getChildAt(0).setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
+                    }
                 }
             }
 
