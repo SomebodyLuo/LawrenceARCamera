@@ -64,6 +64,7 @@ import com.simoncherry.arcamera.util.OrnamentFactory;
 import com.simoncherry.arcamera.util.PermissionUtils;
 
 import org.rajawali3d.Object3D;
+import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.renderer.ISurfaceRenderer;
 import org.rajawali3d.view.ISurface;
 
@@ -974,7 +975,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理3D模型的旋转
 //        mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
-        mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
 
 
@@ -994,17 +995,19 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
 
                 //luoyouren: show face rect
-                if(faceActions.length > 0)
-                {
-                    int faceWidth = faceActions[0].getFace().getRect().width();
-                    int faceHeight = faceActions[0].getFace().getRect().height();
-                    int l = faceActions[0].getFace().getRect().left;
-                    int t = faceActions[0].getFace().getRect().top;
-                    int r = faceActions[0].getFace().getRect().right;
-                    int b = faceActions[0].getFace().getRect().bottom;
-                    mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
-                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
-                }
+//                if(faceActions.length > 0)
+//                {
+//                    int faceWidth = faceActions[0].getFace().getRect().width();
+//                    int faceHeight = faceActions[0].getFace().getRect().height();
+//                    int l = faceActions[0].getFace().getRect().left;
+//                    int t = faceActions[0].getFace().getRect().top;
+//                    int r = faceActions[0].getFace().getRect().right;
+//                    int b = faceActions[0].getFace().getRect().bottom;
+//                    mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
+//                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
+//                }
+
+                mActionText.setText(pos.x + ", " + pos.y + "\n");
             }
         });
     }

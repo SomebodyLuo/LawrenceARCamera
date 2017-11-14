@@ -6,6 +6,9 @@ import android.graphics.Rect;
 import com.sensetime.stmobileapi.STMobileFaceAction;
 import com.simoncherry.arcamera.model.DynamicPoint;
 
+import org.rajawali3d.math.vector.Vector2;
+import org.rajawali3d.math.vector.Vector3;
+
 import java.util.List;
 
 /**
@@ -33,9 +36,9 @@ public interface ARCamContract {
         void handleVideoFrame(byte[] bytes, int[] mRajawaliPixels);
         void savePhoto(Bitmap bitmap);
         void handle3dModelRotation(float pitch, float roll, float yaw);
-        void handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                     int orientation, int eye_dist, float yaw,
-                                     int previewWidth, int previewHeight);
+        Vector3 handle3dModelTransition(STMobileFaceAction[] faceActions,
+                                        int orientation, int eye_dist, float yaw,
+                                        int previewWidth, int previewHeight);
         void handleFaceLandmark(STMobileFaceAction[] faceActions, int orientation, int mouthAh,
                                 int previewWidth, int previewHeight);
         void handleChangeModel(float[] landmarkX, float[] landmarkY);

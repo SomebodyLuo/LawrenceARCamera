@@ -30,6 +30,8 @@ import java.util.List;
 import android.media.MediaScannerConnection;
 import android.view.View;
 
+import org.rajawali3d.math.vector.Vector3;
+
 /**
  * Created by Simon on 2017/7/19.
  */
@@ -143,56 +145,26 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
     // 处理3D模型的平移
     @Override
-    public void handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                        int orientation, int eye_dist, float yaw,
-                                        int previewWidth, int previewHeight) {
+    public Vector3 handle3dModelTransition(STMobileFaceAction[] faceActions,
+                                           int orientation, int eye_dist, float yaw,
+                                           int previewWidth, int previewHeight) {
         STMobileFaceAction faceAction = faceActions[0];
 
-        if (false) {
-            boolean rotate270 = orientation == 270;
-            Rect rect;
-            if (rotate270) {
-                rect = STUtils.RotateDeg270(faceAction.getFace().getRect(), previewWidth, previewHeight);
-            } else {
-                rect = STUtils.RotateDeg90(faceAction.getFace().getRect(), previewWidth, previewHeight);
-            }
 
-//        mView.onGetPointsPosition(rect);  //for face points
+        float x, y, z;
+        PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
+        Rect rect = CalculateRectForPoints(pointFs);
+        x = rect.centerX();
+        y = rect.centerY();
 
-            float centerX = (rect.right + rect.left) / 2.0f;
-            float centerY = (rect.bottom + rect.top) / 2.0f;
-            Log.i(TAG, "centerX = " + rect.centerX() + "; centerY = " + rect.centerY());
-
-            float x = (centerX / previewHeight) * 2.0f - 1.0f;
-            float y = (centerY / previewWidth) * 2.0f - 1.0f;
-//        float x = centerX - previewHeight / 2;
-//        float y = centerY - previewWidth / 2;
-
-            float tmp = eye_dist * 0.000001f - 1115;  // 1115xxxxxx ~ 1140xxxxxx - > 0 ~ 25； luoyouren: 注意25是经验值
-
-            tmp = (float) (tmp / Math.cos(Math.PI * yaw / 180));  // 根据旋转角度还原两眼距离
-
-            tmp = tmp * 0.04f;  // 0 ~ 25 -> 0 ~ 1；         luoyouren: 还原后的两眼距离与标准距离25的比值，就是头盔的缩放比！！！
-
-            float z = tmp * 3.0f + 1.0f;
-            Log.i(TAG, "transition: x= " + x + ", y= " + y + ", z= " + z);
-
-            mView.onGet3dModelTransition(-x, -y, z);
-
-        }
-
-        //==========================================================================================
-        else {
-            float x, y;
-            PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
-            Rect rect = CalculateRectForPoints(pointFs);
-            x = rect.centerX();
-            y = rect.centerY();
+        z = 1.0f;
+        Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 
 
+        mView.onGet3dModelTransition(x, y, z);
 
-            mView.onGet3dModelTransition(x, y, 1.0f);
-        }
+
+        return new Vector3(x, y, z);
     }
 
     int PREVIEW_WIDTH = 640;

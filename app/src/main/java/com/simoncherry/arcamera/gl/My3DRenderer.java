@@ -37,11 +37,13 @@ import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.AlphaMapTexture;
 import org.rajawali3d.materials.textures.StreamingTexture;
 import org.rajawali3d.materials.textures.Texture;
+import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.Cube;
 import org.rajawali3d.primitives.Plane;
 import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.renderer.Renderer;
+import org.rajawali3d.util.GLU;
 import org.rajawali3d.util.ObjectColorPicker;
 import org.rajawali3d.util.OnObjectPickedListener;
 import org.rajawali3d.util.RajLog;
@@ -49,6 +51,8 @@ import org.rajawali3d.util.RajLog;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Simon on 2017/7/19.
@@ -101,6 +105,16 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private volatile boolean mShouldUpdateTexture;
     private final float[] mMatrix = new float[16];
     private boolean mIsStreamingViewMirror = false;
+
+    // 移动物体用
+    private int[] mViewport;
+    private double[] mNearPos4;
+    private double[] mFarPos4;
+    private Vector3 mNearPos;
+    private Vector3 mFarPos;
+    private Vector3 mNewObjPos;
+    private Matrix4 mViewMatrix;
+    private Matrix4 mProjectionMatrix;
 
     private final Runnable mUpdateTexture = new Runnable() {
         public void run() {
@@ -193,6 +207,22 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     @Override
     protected void initScene() {
 
+        mViewport = new int[] { 0, 0, getViewportWidth(), getViewportHeight() };
+        mNearPos4 = new double[4];
+        mFarPos4 = new double[4];
+        mNearPos = new Vector3();
+        mFarPos = new Vector3();
+        mNewObjPos = new Vector3();
+        mViewMatrix = getCurrentCamera().getViewMatrix();
+        mProjectionMatrix = getCurrentCamera().getProjectionMatrix();
+
+
+        Log.i("somebody", "1---------------------------------------");
+        Log.i("somebody", "initScene: " + "mViewport = " + mViewport[2] + " " + mViewport[3]);
+        Log.i("somebody", "initScene: " + "mViewMatrix = " + mViewMatrix.toString());
+        Log.i("somebody", "initScene: " + "mProjectionMatrix = " + mProjectionMatrix.toString());
+        Log.i("somebody", "1---------------------------------------");
+
         // 方向光
         directionalLight = new DirectionalLight(0.0f, 0.0f, -1.0);
         directionalLight.setColor(1.0f, 1.0f, 1.0f);
@@ -230,14 +260,77 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         try {
             mContainer = new Object3D();
             getCurrentScene().addChild(mContainer);
-//            getCurrentScene().getCamera().setZ(5.5);	//original
-			getCurrentScene().getCamera().setZ(105.5);
+            getCurrentScene().getCamera().setZ(5.5);	//original
+//			getCurrentScene().getCamera().setZ(105.5);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         getCurrentScene().setBackgroundColor(0);
+    }
+
+    public void onRenderSurfaceSizeChanged(GL10 gl, int width, int height) {
+        super.onRenderSurfaceSizeChanged(gl, width, height);
+        Log.i("somebody", "My3DRenderer.java: onRenderSurfaceSizeChanged");
+        mViewport[2] = getViewportWidth();
+        mViewport[3] = getViewportHeight();
+        mViewMatrix = getCurrentCamera().getViewMatrix();
+        mProjectionMatrix = getCurrentCamera().getProjectionMatrix();
+
+        Log.i("somebody", "2---------------------------------------");
+        Log.i("somebody", "initScene: " + "mViewport = " + mViewport[2] + " " + mViewport[3]);
+        Log.i("somebody", "initScene: " + "mViewMatrix = " + mViewMatrix.toString());
+        Log.i("somebody", "initScene: " + "mProjectionMatrix = " + mProjectionMatrix.toString());
+        Log.i("somebody", "2---------------------------------------");
+    }
+
+    public void moveSelectedObject(Object3D mSelectedObject, float x, float y) {
+        if (mSelectedObject == null)
+            return;
+
+        Log.i("somebodyluo", "moveSelectedObject: x = " + x + "; y = " + y);
+
+        //
+        // -- unproject the screen coordinate (2D) to the camera's near plane
+        //
+
+        GLU.gluUnProject(x, getViewportHeight() - y, 0, mViewMatrix.getDoubleValues(), 0,
+                mProjectionMatrix.getDoubleValues(), 0, mViewport, 0, mNearPos4, 0);
+
+        //
+        // -- unproject the screen coordinate (2D) to the camera's far plane
+        //
+
+        GLU.gluUnProject(x, getViewportHeight() - y, 1.f, mViewMatrix.getDoubleValues(), 0,
+                mProjectionMatrix.getDoubleValues(), 0, mViewport, 0, mFarPos4, 0);
+
+        //
+        // -- transform 4D coordinates (x, y, z, w) to 3D (x, y, z) by dividing
+        // each coordinate (x, y, z) by w.
+        //
+
+        mNearPos.setAll(mNearPos4[0] / mNearPos4[3], mNearPos4[1]
+                / mNearPos4[3], mNearPos4[2] / mNearPos4[3]);
+        mFarPos.setAll(mFarPos4[0] / mFarPos4[3],
+                mFarPos4[1] / mFarPos4[3], mFarPos4[2] / mFarPos4[3]);
+
+        //
+        // -- now get the coordinates for the selected object
+        //
+
+        double factor = (Math.abs(mSelectedObject.getZ()) + mNearPos.z)
+                / (getCurrentCamera().getFarPlane() - getCurrentCamera()
+                .getNearPlane());
+
+        mNewObjPos.setAll(mFarPos);
+        mNewObjPos.subtract(mNearPos);
+        mNewObjPos.multiply(factor);
+        mNewObjPos.add(mNearPos);
+
+        Log.i("somebodyluo", "moveSelectedObject: mNewObjPos.x = " + mNewObjPos.x + "; mNewObjPos.y = " + mNewObjPos.y);
+        mSelectedObject.setX(mNewObjPos.x);
+        mSelectedObject.setY(mNewObjPos.y);
     }
 
     @Override
@@ -290,9 +383,16 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    mContainer.setY(mTransY);
 
                     //UnProjection
+//                    if (mContainer.getChildAt(0) != null)
+//                    {
+//                        mContainer.getChildAt(0).setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
+//                    }
+//                    mContainer.setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
+
+                    // 灵感来自于Rajawali的拖拽物体demo例程
                     if (mContainer.getChildAt(0) != null)
                     {
-                        mContainer.getChildAt(0).setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
+                        moveSelectedObject(mContainer.getChildAt(0), mTransX, mTransY);
                     }
                 }
             }
