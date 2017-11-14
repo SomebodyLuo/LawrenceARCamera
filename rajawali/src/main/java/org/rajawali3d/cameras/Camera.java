@@ -12,6 +12,8 @@
  */
 package org.rajawali3d.cameras;
 
+import android.util.Log;
+
 import org.rajawali3d.ATransformable3D;
 import org.rajawali3d.bounds.BoundingBox;
 import org.rajawali3d.bounds.IBoundingVolume;
@@ -207,6 +209,8 @@ public class Camera extends ATransformable3D {
 			mLastWidth = width;
 			mLastHeight = height;
 			double ratio = ((double) width) / ((double) height);
+
+			Log.i("somebodyluo", "setProjectionMatrix: -->mNearPlane = " + mNearPlane + "; mFarPlane = " + mFarPlane + "; mFieldOfView = " + mFieldOfView + "; ratio = " + ratio);
 			mProjMatrix.setToPerspective(mNearPlane, mFarPlane, mFieldOfView, ratio);
             mIsInitialized = true;
 		}

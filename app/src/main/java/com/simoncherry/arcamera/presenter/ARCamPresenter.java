@@ -144,7 +144,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
     // 处理3D模型的平移
     @Override
     public void handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                        int orientation, int eye_dist, float yaw,
+                                        int orientation, int eye_dist, float pitch, float roll, float yaw,
                                         int previewWidth, int previewHeight) {
         STMobileFaceAction faceAction = faceActions[0];
 
@@ -206,6 +206,14 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             //下面通过人脸的大小缩放比来确定Scale的参数
             /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
             float area = rect.width() * rect.height();
+
+            //对人脸矩形的面积进行补偿：pitch roll yaw
+            double headPitch = (pitch > 0) ? pitch : -pitch;
+            headPitch = 90 - headPitch;
+            double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
+            Log.i(TAG, "luoyouren: ------------------------------------------------------------------------------------- factor =  " + factor);
+            area = area / (float) factor;
+
             float z;
             if (true) {
                 //平方关系: 比较合适
@@ -228,7 +236,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //            }
 
             //================================用缩放修正平移：现在开始做修正工作，利用Z轴去修正X / Y轴 =======================================
-            Log.i(TAG, "luoyouren: ------------------------------------------------------------------------------------- scale z =  " + z);
+            Log.i(TAG, "luoyouren: ------- scale z =  " + z);
 
             //----------修正Y轴----------
             if (z > 0)  //分别修正
@@ -273,6 +281,9 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //            } else {
 //                x1 = x1 + 0.08f * z;        //注意z是负的
 //            }
+
+            //===================================================== 旋转调整：pitch roll yaw ===============================================
+
             //==============================================================================================================================
 
             mView.onGet3dModelTransition(x1, y1, z);

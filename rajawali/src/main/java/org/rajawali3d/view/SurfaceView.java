@@ -318,6 +318,7 @@ public class SurfaceView extends GLSurfaceView implements ISurface {
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             mWidth = width;
             mHeight = height;
+            Log.i("somebodyluo", "onSurfaceChanged: width = " + width + "; height = " + height);
             mRenderer.onRenderSurfaceSizeChanged(gl, width, height);
         }
 

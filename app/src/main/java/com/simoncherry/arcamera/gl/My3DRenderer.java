@@ -257,8 +257,21 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 private boolean enableScale = true;
                 // 默认是 使能旋转 */
                 if (mOrnamentModel.isEnableRotation()) {
+
+//                    mContainer.setPosition(0.0f, 0.0f, 0.0f);
+
                     // 处理3D模型的旋转
-                    mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
+//                    mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
+
+                    if (mContainer.getChildAt(0) != null)
+                    {
+//                        mContainer.getChildAt(0).setRotX(mAccValues.x / 2);   // roll 横滚角
+                        mContainer.getChildAt(0).setRotation(new Vector3(0, 1, 3), mAccValues.x / 2);
+//                        mContainer.getChildAt(0).setRotY(mAccValues.y);     // yaw 偏航角
+//                        mContainer.getChildAt(0).setRotZ(mAccValues.z);     // pitch 俯仰角
+                    }
+
+//                    mContainer.setPosition(mTransX, mTransY, mScale);
                 }
 
                 if (mOrnamentModel.isEnableScale()) {

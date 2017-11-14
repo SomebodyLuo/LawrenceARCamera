@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.WindowManager;
 
@@ -344,6 +345,8 @@ public abstract class Renderer implements ISurfaceRenderer {
 
         final int wViewport = mOverrideViewportWidth > -1 ? mOverrideViewportWidth : mDefaultViewportWidth;
         final int hViewport = mOverrideViewportHeight > -1 ? mOverrideViewportHeight : mDefaultViewportHeight;
+        Log.i("somebodyluo", "onRenderSurfaceSizeChanged: -->mOverrideViewportWidth = " + mOverrideViewportWidth + "; mOverrideViewportHeight = " + mOverrideViewportHeight);
+        Log.i("somebodyluo", "onRenderSurfaceSizeChanged: -->setViewPort width = " + wViewport + "; height = " + hViewport);
         setViewPort(wViewport, hViewport);
 
         if (!mSceneInitialized) {

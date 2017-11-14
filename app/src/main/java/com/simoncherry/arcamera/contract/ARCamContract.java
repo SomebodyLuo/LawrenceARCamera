@@ -34,7 +34,7 @@ public interface ARCamContract {
         void savePhoto(Bitmap bitmap);
         void handle3dModelRotation(float pitch, float roll, float yaw);
         void handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                     int orientation, int eye_dist, float yaw,
+                                     int orientation, int eye_dist, float pitch, float roll, float yaw,
                                      int previewWidth, int previewHeight);
         void handleFaceLandmark(STMobileFaceAction[] faceActions, int orientation, int mouthAh,
                                 int previewWidth, int previewHeight);

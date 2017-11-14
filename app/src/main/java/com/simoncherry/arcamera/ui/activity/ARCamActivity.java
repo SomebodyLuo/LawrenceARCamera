@@ -972,9 +972,9 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
                                          final int headYaw, final int headPitch, final int browJump) {
         // 处理3D模型的旋转
-//        mPresenter.handle3dModelRotation(pitch, roll, yaw);
+        mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
-        mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//        mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, pitch, roll, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
 
 
