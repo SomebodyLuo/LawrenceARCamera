@@ -312,8 +312,13 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
         mNearPos.setAll(mNearPos4[0] / mNearPos4[3], mNearPos4[1]
                 / mNearPos4[3], mNearPos4[2] / mNearPos4[3]);
+
+        Log.i("somebodyluo", "moveSelectedObject: mNearPos.x = " + mNearPos.x + "; mNearPos.y = " + mNearPos.y + "; mNearPos.z = " + mNearPos.z);
+
         mFarPos.setAll(mFarPos4[0] / mFarPos4[3],
                 mFarPos4[1] / mFarPos4[3], mFarPos4[2] / mFarPos4[3]);
+
+        Log.i("somebodyluo", "moveSelectedObject: mFarPos.x = " + mFarPos.x + "; mFarPos.y = " + mFarPos.y + "; mFarPos.z = " + mFarPos.z);
 
         //
         // -- now get the coordinates for the selected object
@@ -323,10 +328,13 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 / (getCurrentCamera().getFarPlane() - getCurrentCamera()
                 .getNearPlane());
 
+        Log.i("somebodyluo", "moveSelectedObject: factor = " + factor + "; mSelectedObject.getZ() = " + mSelectedObject.getZ());
+
         mNewObjPos.setAll(mFarPos);
         mNewObjPos.subtract(mNearPos);
         mNewObjPos.multiply(factor);
         mNewObjPos.add(mNearPos);
+
 
         Log.i("somebodyluo", "moveSelectedObject: mNewObjPos.x = " + mNewObjPos.x + "; mNewObjPos.y = " + mNewObjPos.y);
         mSelectedObject.setX(mNewObjPos.x);
@@ -383,6 +391,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    mContainer.setY(mTransY);
 
                     //UnProjection
+                    //setScreenCoordinates 崩溃
 //                    if (mContainer.getChildAt(0) != null)
 //                    {
 //                        mContainer.getChildAt(0).setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);

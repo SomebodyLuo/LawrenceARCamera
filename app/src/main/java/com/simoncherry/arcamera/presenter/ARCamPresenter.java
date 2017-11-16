@@ -157,7 +157,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         x = rect.centerX();
         y = rect.centerY();
 
-        z = 1.0f;
+        z = 0.0f;
         Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 
 

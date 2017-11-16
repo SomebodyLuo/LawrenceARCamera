@@ -15,6 +15,8 @@ package org.rajawali3d;
 import android.graphics.Color;
 import android.opengl.GLES20;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
 import org.rajawali3d.bounds.BoundingBox;
 import org.rajawali3d.bounds.IBoundingVolume;
 import org.rajawali3d.cameras.Camera;
@@ -535,6 +537,8 @@ public class Object3D extends ATransformable3D implements Comparable<Object3D>, 
 		Matrix.setIdentityM(modelMatrix, 0);
 
 		GLU.gluUnProject(x, viewportHeight - y, 0.0, modelMatrix, 0, mPMatrix.getDoubleValues(), 0, viewport, 0, r1, 0);
+
+		Log.i("somebodyluo", "after cal: r1[0]" + r1[0] + "; r1[1] = " + r1[1] + "; x = " + r1[0] * eyeZ + "; y = " + r1[1] * -eyeZ);
 		setPosition(r1[0] * eyeZ, r1[1] * -eyeZ, 0);
 	}
 

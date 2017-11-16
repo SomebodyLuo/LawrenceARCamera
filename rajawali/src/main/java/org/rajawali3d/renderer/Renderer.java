@@ -343,7 +343,8 @@ public abstract class Renderer implements ISurfaceRenderer {
         mDefaultViewportWidth = width;
         mDefaultViewportHeight = height;
 
-        Log.i("somebody", "Renderer.java: onRenderSurfaceSizeChanged");
+        Log.i("sombodyluo", "setViewPort: mDefaultViewportWidth = " + mDefaultViewportWidth + "; mDefaultViewportHeight = " + mDefaultViewportHeight);
+        Log.i("sombodyluo", "setViewPort: mOverrideViewportWidth = " + mOverrideViewportWidth + "; mOverrideViewportHeight = " + mOverrideViewportHeight);
         final int wViewport = mOverrideViewportWidth > -1 ? mOverrideViewportWidth : mDefaultViewportWidth;
         final int hViewport = mOverrideViewportHeight > -1 ? mOverrideViewportHeight : mDefaultViewportHeight;
         setViewPort(wViewport, hViewport);
@@ -502,6 +503,7 @@ public abstract class Renderer implements ISurfaceRenderer {
         if (width != mCurrentViewportWidth || height != mCurrentViewportHeight) {
             mCurrentViewportWidth = width;
             mCurrentViewportHeight = height;
+            Log.i("sombodyluo", "setViewPort: mCurrentViewportWidth = " + mCurrentViewportWidth + "; mCurrentViewportHeight = " + mCurrentViewportHeight);
             mCurrentScene.updateProjectionMatrix(width, height);
             GLES20.glViewport(0, 0, width, height);
         }

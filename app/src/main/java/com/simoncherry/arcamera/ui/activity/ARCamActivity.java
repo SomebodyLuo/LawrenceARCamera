@@ -220,6 +220,10 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                     case MotionEvent.ACTION_CANCEL:
                         mController.addFilter(FilterFactory.getFilter(getResources(), mCurrentFilterId));
                         break;
+                    case MotionEvent.ACTION_MOVE:
+                        onGet3dModelTransition(event.getX(), event.getY(), 0.0f);
+                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
+                        break;
                 }
                 return true;
             }
@@ -230,11 +234,14 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mRenderSurface = (org.rajawali3d.view.SurfaceView) findViewById(R.id.rajwali_surface);
         // 将Rajawali的SurfaceView的背景设为透明
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
+
         // 将Rajawali的SurfaceView的尺寸设为录像的尺寸
-        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);
+//        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);   //sombodyluo
+
         mISurfaceRenderer = new My3DRenderer(this);
         ((My3DRenderer) mISurfaceRenderer).setScreenW(IMAGE_WIDTH);
         ((My3DRenderer) mISurfaceRenderer).setScreenH(IMAGE_HEIGHT);
+
         mRenderSurface.setSurfaceRenderer(mISurfaceRenderer);
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -244,7 +251,10 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                     float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
                     float touchX = event.getX() * scaleW;
                     float touchY = event.getY() * scaleH;
+                    Log.i("sombodyluo", "onTouch: mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
                     ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE){
+                    Log.i("sombodyluo", "onTouch: event.getX() = " + event.getX() + "; event.getY() = " + event.getY());
                 }
                 return onTouchEvent(event);
             }
@@ -277,6 +287,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                         .removeOnGlobalLayoutListener(this);
                 mSurfaceWidth = ((org.rajawali3d.view.SurfaceView) mRenderSurface).getWidth();
                 mSurfaceHeight = ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHeight();
+                Log.i("sombodyluo", "onGlobalLayout: mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
             }
         });
     }
@@ -975,7 +986,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理3D模型的旋转
 //        mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
-        final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//        final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
 
 
@@ -1007,7 +1018,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
 //                }
 
-                mActionText.setText(pos.x + ", " + pos.y + "\n");
+//                mActionText.setText(pos.x + ", " + pos.y + "\n");
             }
         });
     }
