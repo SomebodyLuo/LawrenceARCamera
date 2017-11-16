@@ -261,15 +261,15 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    mContainer.setPosition(0.0f, 0.0f, 0.0f);
 
                     // 处理3D模型的旋转
-//                    mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
+                    mContainer.setRotation(mAccValues.x, mAccValues.y, mAccValues.z);
 
-                    if (mContainer.getChildAt(0) != null)
-                    {
+//                    if (mContainer.getChildAt(0) != null)
+//                    {
 //                        mContainer.getChildAt(0).setRotX(mAccValues.x / 2);   // roll 横滚角
-                        mContainer.getChildAt(0).setRotation(new Vector3(0, 1, 3), mAccValues.x / 2);
+//                        mContainer.getChildAt(0).setRotation(new Vector3(0, 1, 3), mAccValues.x / 2);
 //                        mContainer.getChildAt(0).setRotY(mAccValues.y);     // yaw 偏航角
 //                        mContainer.getChildAt(0).setRotZ(mAccValues.z);     // pitch 俯仰角
-                    }
+//                    }
 
 //                    mContainer.setPosition(mTransX, mTransY, mScale);
                 }
@@ -300,7 +300,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    getCurrentCamera().setY(mTransY);
                     //换一种方法移动3D模型
                     mContainer.setX(mTransX);
-                    mContainer.setY(mTransY);
+                    mContainer.setY(mTransY + 1.1);
                 }
             }
 
@@ -850,7 +850,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         }
 
         mContainer.setTransparent(false);
-        mContainer.setScale(1.0f);
+        mContainer.setScale(1.05f, 1.0f, 1.0f);
         mContainer.setRotation(0, 0, 0);
         mContainer.setPosition(0, 0, 0);
 

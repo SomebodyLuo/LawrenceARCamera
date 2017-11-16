@@ -76,7 +76,7 @@ public class OrnamentFactory {
         model.setName("ironManTop2");
         model.setModelResId(R.raw.ironman_mask_obj);
         model.setScale(0.04f); //*********
-        model.setOffset(0, -1.0f, 0.0f);
+        model.setOffset(0, -1.1f, 0.0f);
         model.setRotate(0, 0, 0);
         // for object pick
 //        model.setNeedObjectPick(true);
