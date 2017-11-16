@@ -141,15 +141,15 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //        mView.onGetPointsPosition(faceActions[0].getFace().getRect());
     }
 
-    private float mStandardArea = 11877.0f;
+    private final float mStandardArea = 11877.0f;
 
     // 处理3D模型的平移
     @Override
     public Vector3 handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                           int orientation, int eye_dist, float yaw,
+                                           int orientation, int eye_dist, float pitch, float roll, float yaw,
                                            int previewWidth, int previewHeight) {
-        STMobileFaceAction faceAction = faceActions[0];
 
+        STMobileFaceAction faceAction = faceActions[0];
 
         float x, y, z;
         PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
@@ -158,7 +158,6 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         y = rect.centerY();
 
         z = 0.0f;
-        Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 
         //人脸的检测图片大小是640x480
         //但是rajawali的显示区域大小是640x384
@@ -168,6 +167,30 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         float faceCenterX = x * scaleW;
         float faceCenterY = y * scaleH;
 
+        //================================缩放调整：z轴说明的是人脸的大小，即人脸离手机的距离=======================================
+        //下面通过人脸的大小缩放比来确定Scale的参数
+            /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        float area = rect.width() * rect.height();
+
+        //对人脸矩形的面积进行补偿：pitch roll yaw
+        double headPitch = (pitch > 0) ? pitch : -pitch;
+        headPitch = 90 - headPitch;
+        double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
+        Log.i(TAG, "luoyouren: ------------------------------------------------------------------------------------- factor =  " + factor);
+        area = area / (float) factor;
+
+        if (true) {
+            //平方关系: 比较合适
+            z = 5.5f * 5.5f * mStandardArea / area;
+            // 依据: (l x h) / (L x H) = D^2 / d^2;
+            z = 5.5f - (float) Math.sqrt((double) z);
+        }else
+        {
+            //线性关系
+            z = - mStandardArea / area;
+        }
+
+        Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 
         mView.onGet3dModelTransition(faceCenterX, faceCenterY, z);
 
@@ -412,6 +435,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         mDynamicPoints.add(new DynamicPoint(26, landmarkX[8], landmarkY[8], 0.0f));
         mDynamicPoints.add(new DynamicPoint(25, landmarkX[12], landmarkY[12], 0.0f));
         // 左眼
+        //总共44个切片面，对整个切片面上点进行统一的坐标操作：例如index=19这个切片，就是左眼的位置，详见《AR Camera开发记录（二） -- 3D人脸模型》
         mDynamicPoints.add(new DynamicPoint(19, landmarkX[61], landmarkY[61], 0.0f));
         mDynamicPoints.add(new DynamicPoint(32, landmarkX[60], landmarkY[60], 0.0f));
         mDynamicPoints.add(new DynamicPoint(16, landmarkX[75], landmarkY[75], 0.0f));

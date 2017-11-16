@@ -22,6 +22,7 @@ public interface ARCamContract {
         void onGetVideoData(byte[] bytes);
         void onGet3dModelRotation(float pitch, float roll, float yaw);
         void onGet3dModelTransition(float x, float y, float z);
+        void onGet3dModelTransition(Rect rect);
         void onGetFaceLandmark(float[] landmarkX, float[] landmarkY, int isMouthOpen);
         void onGetChangePoint(List<DynamicPoint> mDynamicPoints);
 
@@ -37,7 +38,7 @@ public interface ARCamContract {
         void savePhoto(Bitmap bitmap);
         void handle3dModelRotation(float pitch, float roll, float yaw);
         Vector3 handle3dModelTransition(STMobileFaceAction[] faceActions,
-                                        int orientation, int eye_dist, float yaw,
+                                        int orientation, int eye_dist, float pitch, float roll, float yaw,
                                         int previewWidth, int previewHeight);
         void handleFaceLandmark(STMobileFaceAction[] faceActions, int orientation, int mouthAh,
                                 int previewWidth, int previewHeight);

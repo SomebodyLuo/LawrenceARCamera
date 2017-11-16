@@ -84,6 +84,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     private float mTransX = 0.0f;
     private float mTransY = 0.0f;
     private float mScale = 1.0f;
+    private Rect mFaceRect;
 
     // 用于人脸长方形
     private Rect mRect;
@@ -169,6 +170,12 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
             mTransX = x;
             mTransY = y;
             setScale(z);
+        }
+    }
+
+    public void setTransition(Rect rect) {
+        if (mModelType == Ornament.MODEL_TYPE_STATIC || mModelType == Ornament.MODEL_TYPE_SHADER) {
+            mFaceRect = rect;
         }
     }
 
@@ -1025,7 +1032,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         if (indices != null) {
             int len = indices.length;
             for (int i=0; i<len; i++) {
-                int index = indices[i]-1;   //为什么有那么多点要操作？
+                int index = indices[i]-1;   //总共44个切片面，对整个切片面上点进行统一的坐标操作：例如index=19这个切片，就是左眼的位置，详见《AR Camera开发记录（二） -- 3D人脸模型》
                 vertBuffer.put(index * 3, x);
                 vertBuffer.put(index * 3 + 1, y);
                 vertBuffer.put(index * 3 + 2, z);

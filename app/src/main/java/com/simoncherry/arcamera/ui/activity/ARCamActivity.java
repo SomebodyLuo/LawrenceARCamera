@@ -942,6 +942,11 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     }
 
     @Override
+    public void onGet3dModelTransition(Rect rect) {
+        ((My3DRenderer) mISurfaceRenderer).setTransition(rect);
+    }
+
+    @Override
     public void onGetPointsPosition(Rect rect) {
         ((My3DRenderer) mISurfaceRenderer).setPointsRect(rect);
     }
@@ -990,14 +995,14 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
                                          final int headYaw, final int headPitch, final int browJump) {
         // 处理3D模型的旋转
-//        mPresenter.handle3dModelRotation(pitch, roll, yaw);
+        mPresenter.handle3dModelRotation(pitch, roll, yaw);
         // 处理3D模型的平移
-        final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, pitch, roll, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
 
 
         // 处理人脸关键点——>给面具使用
-//        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         //luoyouren: 处理人脸长方形
 //        mPresenter.handelFacePoints(faceActions);
@@ -1024,7 +1029,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
 //                }
 
-                mActionText.setText(pos.x + ", " + pos.y + "\n");
+                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
             }
         });
     }
