@@ -160,8 +160,16 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         z = 0.0f;
         Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 
+        //人脸的检测图片大小是640x480
+        //但是rajawali的显示区域大小是640x384
+        //所以要换算
+        float scaleW = 384.0f / 480.0f;
+        float scaleH = 640.0f / 640.0f;
+        float faceCenterX = x * scaleW;
+        float faceCenterY = y * scaleH;
 
-        mView.onGet3dModelTransition(x, y, z);
+
+        mView.onGet3dModelTransition(faceCenterX, faceCenterY, z);
 
 
         return new Vector3(x, y, z);
@@ -216,7 +224,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
     private Rect CalculateRectForPoints(PointF[] pointF)
     {
-        if (pointF.length < 0)
+        if (pointF.length <= 0)
         {
             return null;
         }

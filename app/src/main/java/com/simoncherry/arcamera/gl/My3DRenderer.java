@@ -383,20 +383,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 }
 
                 if (mOrnamentModel.isEnableTransition()) {
-                    // 处理3D模型的平移
-//                    getCurrentCamera().setX(mTransX);
-//                    getCurrentCamera().setY(mTransY);
-                    //换一种方法移动3D模型
-//                    mContainer.setX(mTransX);
-//                    mContainer.setY(mTransY);
-
-                    //UnProjection
-                    //setScreenCoordinates 崩溃
-//                    if (mContainer.getChildAt(0) != null)
-//                    {
-//                        mContainer.getChildAt(0).setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
-//                    }
-//                    mContainer.setScreenCoordinates(mTransX, mTransY, getViewportWidth(), getViewportHeight(), 5.5f);
 
                     // 灵感来自于Rajawali的拖拽物体demo例程
                     if (mContainer.getChildAt(0) != null)
