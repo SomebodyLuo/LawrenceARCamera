@@ -302,7 +302,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    getCurrentCamera().setY(mTransY);
                     //换一种方法移动3D模型
                     mContainer.setX(mTransX);
-                    mContainer.setY(mTransY + 1.1);
+                    mContainer.setY(mTransY + 1.0);     //1.0 是模型带来的系统误差
                 }
             }
 
@@ -396,6 +396,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         }
 
         if (mPickedObject != null && mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0) {
+            Log.i("somebodyluo", "(mPickedObject != null && mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0)");
             int index = mObject3DList.indexOf(mPickedObject);
             if (index >= 0) {
                 List<Ornament.Model> modelList = mOrnamentModel.getModelList();
@@ -403,11 +404,14 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                     Ornament.Model model = modelList.get(index);
                     if (model != null && model.isNeedObjectPick()) {
                         boolean isPicked = model.isPicked();
+                        Log.i("somebodyluo", "picking model: " + model.getName() + "; " + isPicked);
                         if (isPicked) {
+                            // 头盔面罩打开
                             mPickedObject.setPosition(model.getAfterX(), model.getAfterY(), model.getAfterZ());
                             mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
                                     model.getAfterAngle());
                         } else {
+                            // 头盔面罩合上
                             mPickedObject.setPosition(model.getBeforeX(), model.getBeforeY(), model.getBeforeZ());
                             mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
                                     model.getBeforeAngle());
@@ -732,6 +736,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
             if (mPicker == null) {
                 mPicker = new ObjectColorPicker(this);
                 mPicker.setOnObjectPickedListener(this);
+                Log.i("somebodyluo", "handleObjectPicking: " + model.getName());
             }
             mPicker.registerObject(object3D);
         }
@@ -1013,7 +1018,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     }
 
     public void getObjectAt(float x, float y) {
+
+        Log.i("somebodyluo", "getObjectAt1");
         if (mPicker != null) {
+            Log.i("somebodyluo", "getObjectAt2");
             mPicker.getObjectAt(x, y);
         }
     }

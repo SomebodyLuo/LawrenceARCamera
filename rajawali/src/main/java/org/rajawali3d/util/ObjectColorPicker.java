@@ -15,6 +15,7 @@ package org.rajawali3d.util;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,6 +81,7 @@ public class ObjectColorPicker implements IObjectPicker {
 
 	public void getObjectAt(float x, float y) {
 		if (mObjectPickedListener != null) {
+			Log.i("somebodyluo", "getObjectAt3");
 			mRenderer.getCurrentScene().requestColorPicking(new ColorPickerInfo(x, y, this));
 		}
 	}

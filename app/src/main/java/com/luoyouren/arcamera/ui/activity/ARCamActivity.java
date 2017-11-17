@@ -212,6 +212,21 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mController.clearFilter();
+
+                        // 注意My3DRenderer的尺寸被设置为了IMAGE_WIDTH x IMAGE_HEIGHT
+                        // 另外呢，ObjectColorPicker.java中的pickObject函数中
+                        /*GLES20.glReadPixels(pickerInfo.getX(),
+					picker.mRenderer.getViewportHeight() - pickerInfo.getY(),
+					1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);*/
+
+                        float scaleW = (float) IMAGE_WIDTH / (float) VIDEO_WIDTH ;
+                        float scaleH = (float) IMAGE_HEIGHT / (float) VIDEO_HEIGHT;
+                        float touchX = event.getX() * scaleW;
+                        float touchY = event.getY() * scaleH;
+                        ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+
+                        Log.i("somebodyluo", "initSurfaceView MotionEvent.ACTION_DOWN");
+
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
@@ -237,11 +252,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    float scaleW = VIDEO_WIDTH / (float) mSurfaceWidth;
-                    float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
-                    float touchX = event.getX() * scaleW;
-                    float touchY = event.getY() * scaleH;
-                    ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+//                    float scaleW = VIDEO_WIDTH / (float) IMAGE_WIDTH;
+//                    float scaleH = VIDEO_HEIGHT / (float) IMAGE_HEIGHT;
+//                    float touchX = event.getX() * scaleW;
+//                    float touchY = event.getY() * scaleH;
+//                    ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+
+                    Log.i("somebodyluo", "initRajawaliSurface MotionEvent.ACTION_DOWN");
                 }
                 return onTouchEvent(event);
             }
@@ -432,6 +449,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mOrnaments.addAll(OrnamentFactory.getPresetMask());
         mOrnamentAdapter.notifyDataSetChanged();
 
+        //APP启动自动加载Ironman mask
         mOrnamentAdapter.onItemClickListener.onItemClick(1);
     }
 

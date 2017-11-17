@@ -57,9 +57,47 @@ public class OrnamentFactory {
     }
 
     private static Ornament getTigerNose() {
+
         Ornament ornament = new Ornament();
 
-        Ornament.Model model = new Ornament.Model();
+        if (true)
+        {
+            Ornament.Model ironManTop = new Ornament.Model();
+            ironManTop.setName("ironManTop2");
+
+//-------------------------------------------------------------------------------------------------------------
+            ironManTop.setModelResId(R.raw.ironman_mask_5_obj);
+            ironManTop.setScale(0.04f);
+            ironManTop.setOffset(0, 0.0f, 0);
+            // for object pick
+            ironManTop.setNeedObjectPick(true);
+            ironManTop.setBeforeY(0.0f);
+            ironManTop.setAfterY(0.55f);
+            ironManTop.setBeforeZ(0);
+            ironManTop.setAfterZ(-0.2f);
+            ironManTop.setAxisX(1);
+            ironManTop.setBeforeAngle(0);
+            ironManTop.setAfterAngle(40);
+
+            Ornament.Model ironManBottom = new Ornament.Model();
+            ironManBottom.setName("ironManBottom");
+            ironManBottom.setModelResId(R.raw.ironman_mask_4_obj);
+            ironManBottom.setScale(0.04f);
+            ironManBottom.setOffset(0, 0.0f, 0);
+
+            ornament.setType(Ornament.MODEL_TYPE_STATIC);
+            ornament.setImgResId(R.drawable.ic_iron_man);
+            List<Ornament.Model> modelList = new ArrayList<>();
+            modelList.add(ironManTop);
+            modelList.add(ironManBottom);
+            ornament.setModelList(modelList);
+            ornament.setToastMsg("点击头盔");
+
+        } else {
+
+            //上一版本代码
+
+            Ornament.Model model = new Ornament.Model();
 //-------------------------------------------------------------------------------------------------------------
 //        model.setModelResId(R.raw.tiger_nose_obj);
 //        model.setScale(0.002f);
@@ -68,12 +106,12 @@ public class OrnamentFactory {
 
 //-------------------------------------------------------------------------------------------------------------
         /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
-        model.setName("ironManTop2");
-        model.setModelResId(R.raw.ironman_mask_obj);
-        model.setScale(0.04f); //*********
-        model.setOffset(0, -1.1f, 0.0f);
-        model.setRotate(0, 0, 0);
-        // for object pick
+            model.setName("ironManTop2");
+            model.setModelResId(R.raw.ironman_mask_5_obj);
+            model.setScale(0.04f); //*********
+            model.setOffset(0, 0.0f, 0.0f);
+            model.setRotate(0, 0, 0);
+            // for object pick
 //        model.setNeedObjectPick(true);
 //        model.setBeforeY(-0.5f);
 //        model.setAfterY(-0.15f);
@@ -84,11 +122,14 @@ public class OrnamentFactory {
 //        model.setAfterAngle(40);
 //-------------------------------------------------------------------------------------------------------------
 
-        ornament.setType(Ornament.MODEL_TYPE_STATIC);
-        ornament.setImgResId(R.drawable.ic_iron_man);
-        List<Ornament.Model> modelList = new ArrayList<>();
-        modelList.add(model);
-        ornament.setModelList(modelList);
+            ornament.setType(Ornament.MODEL_TYPE_STATIC);
+            ornament.setImgResId(R.drawable.ic_iron_man);
+            List<Ornament.Model> modelList = new ArrayList<>();
+            modelList.add(model);
+            ornament.setModelList(modelList);
+
+
+        }
 
         return ornament;
     }
