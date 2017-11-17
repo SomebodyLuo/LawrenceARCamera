@@ -33,7 +33,7 @@
         surfaceview:renderMode="RENDER_WHEN_DIRTY"/>
 
     <!--拍照\录像按钮-->
-    <com.simoncherry.arcamera.ui.custom.CircularProgressView
+    <com.luoyouren.arcamera.ui.custom.CircularProgressView
         android:id="@+id/btn_capture"
         android:layout_width="80dp"
         android:layout_height="80dp"

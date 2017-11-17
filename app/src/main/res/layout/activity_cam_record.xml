@@ -15,7 +15,7 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <com.simoncherry.arcamera.ui.custom.CircularProgressView
+    <com.luoyouren.arcamera.ui.custom.CircularProgressView
         android:id="@+id/mCapture"
         android:layout_width="88dp"
         android:layout_height="88dp"

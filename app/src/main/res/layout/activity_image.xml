@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.ImageActivity">
 
-    <com.simoncherry.arcamera.gl.SGLView
+    <com.luoyouren.arcamera.gl.SGLView
         android:id="@+id/glView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
