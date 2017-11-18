@@ -302,7 +302,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    getCurrentCamera().setY(mTransY);
                     //换一种方法移动3D模型
                     mContainer.setX(mTransX);
-                    mContainer.setY(mTransY + 1.0);     //1.0 是模型带来的系统误差
+                    mContainer.setY(mTransY);
                 }
             }
 
@@ -857,7 +857,11 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         }
 
         mContainer.setTransparent(false);
-        mContainer.setScale(1.05f, 1.0f, 1.0f);
+
+        /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
+        /* 修改了模型位置，mContainer.setScale(1.08f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
+        mContainer.setScale(1.08f, 1.0f, 1.0f);
         mContainer.setRotation(0, 0, 0);
         mContainer.setPosition(0, 0, 0);
 

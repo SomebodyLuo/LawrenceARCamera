@@ -1005,7 +1005,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         //luoyouren: 处理人脸长方形
-//        mPresenter.handelFacePoints(faceActions);
+        mPresenter.handelFacePoints(faceActions);
 
         // 显示人脸检测的参数
         runOnUiThread(new Runnable() {

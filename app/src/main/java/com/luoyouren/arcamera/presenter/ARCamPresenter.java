@@ -134,7 +134,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //        mView.onGetPointsPosition(faceActions[0].getFace().getRect());
     }
 
-    private float mStandardArea = 11877.0f;
+    private float mStandardArea = 10700.0f;
 
     // 处理3D模型的平移
     @Override
@@ -150,14 +150,23 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
         //==========================================================================================
         else {
+            //2017-11-02
+//            float x, y;
+//            PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
+//            Rect rect = CalculateRectForPoints(pointFs);
+//            x = rect.centerX();
+//            y = rect.centerY();
+
+            //2017-11-18
+            //换成原始的人脸检测返回的那个矩形
             float x, y;
-            PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
-            Rect rect = CalculateRectForPoints(pointFs);
+            Rect rect = preProcessRect(faceAction.getFace().getRect(), orientation);
             x = rect.centerX();
             y = rect.centerY();
 
+
             //================================平移调整：将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
-            //根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y，
+            //2017-11-02 根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y，
             float x1, y1;
 //            x1 = -0.0292f * y + 7f;
 //            y1 = 0.0291f * x - 9.3f;
@@ -170,17 +179,42 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             Log.i(TAG, "luoyouren: rect.width() = " + rect.width() + "; rect.height()" + rect.height() +"; rect.area = " + rect.width() * rect.height() + "; x1 =" + x1 + "; y1 = " + y1);
 
             //================================缩放调整：z轴说明的是人脸的大小，即人脸离手机的距离=======================================
+            //2017-11-03
             //下面通过人脸的大小缩放比来确定Scale的参数
-            /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+            /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+            /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
             float area = rect.width() * rect.height();
+            Log.i(TAG, "luoyouren: --------------------- area =  " + area);
 
+            //2017-11-09
             //对人脸矩形的面积进行补偿：pitch roll yaw
             double headPitch = (pitch > 0) ? pitch : -pitch;
             headPitch = 90 - headPitch;
-            double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
-            Log.i(TAG, "luoyouren: --------------------- factor =  " + factor);
+            double factorPitch =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
+            Log.i(TAG, "luoyouren: --------------------- factorPitch =  " + factorPitch);
+
+            //2017-11-18
+            //补偿的实际效果显示为：过度了！不用补偿这个！
+            double headYaw = (yaw > 0) ? yaw : -yaw;
+            double factorYaw = Math.cos(headYaw * Math.PI / 180.0f);        //利用yaw(偏航角)对人脸大小进行补偿
+            Log.i(TAG, "luoyouren: --------------------- factorYaw =  " + factorYaw);
+
+            //依据： x = L / ( cos& + sin&) --> x^2 = L^2 / (cos& + sin&)^2
+            //实际效果也不行！
+            double headRoll = roll + 90;
+            headRoll = (headRoll > 0) ? headRoll : -headRoll;
+            double cosRoll = Math.cos(headRoll * Math.PI / 180.0f);
+            double sinRoll = Math.sin(headRoll * Math.PI / 180.0f);
+            double factorRoll = cosRoll + sinRoll;
+            factorRoll = 1.1f * cosRoll;
+            Log.i(TAG, "luoyouren: --------------------- factorRoll =  " + factorRoll);
+
+
+            double factor = factorPitch;
+            Log.i(TAG, "luoyouren: ---------------------------------------- factor =  " + factor);
             area = area / (float) factor;
 
+            //2017-11-03
             float z;
             if (true) {
                 //平方关系: 比较合适
@@ -193,18 +227,11 @@ public class ARCamPresenter implements ARCamContract.Presenter {
                 z = - mStandardArea / area;
             }
 
-//            if (z < -2.0f)
-//            {
-//                mView.setViewShow(View.INVISIBLE);
-//            }
-//            else
-//            {
-//                mView.setViewShow(View.VISIBLE);
-//            }
+
 
             //================================用缩放修正平移：现在开始做修正工作，利用Z轴去修正X / Y轴 =======================================
-            Log.i(TAG, "luoyouren: -------------------------------- scale z =  " + z);
-
+            Log.i(TAG, "luoyouren: ---------------------------------------- scale z =  " + z);
+            //2017-11-06
             //----------修正Y轴----------
             if (z > 0)  //分别修正
             {
@@ -252,10 +279,19 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             //===================================================== 旋转调整：pitch roll yaw ===============================================
 
             //==============================================================================================================================
+            //头离屏幕太远，直接不显示——把模型移动到视窗外
+            if (z < -3.0f)
+            {
+                x1 = y1 = 20.0f;
+            }
 
-            mView.onGet3dModelTransition(x1, y1, z);
+
+            mView.onGet3dModelTransition(x1, y1 + 1.1f, z); //1.0 是模型带来的系统误差
         }
     }
+
+
+
 
     int PREVIEW_WIDTH = 640;
     int PREVIEW_HEIGHT = 480;

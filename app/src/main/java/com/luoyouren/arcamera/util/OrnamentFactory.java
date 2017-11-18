@@ -66,7 +66,9 @@ public class OrnamentFactory {
             ironManTop.setName("ironManTop2");
 
 //-------------------------------------------------------------------------------------------------------------
-            ironManTop.setModelResId(R.raw.ironman_mask_5_obj);
+            /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+            /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
+            ironManTop.setModelResId(R.raw.ironman_mask_8_obj);
             ironManTop.setScale(0.04f);
             ironManTop.setOffset(0, 0.0f, 0);
             // for object pick
@@ -81,7 +83,7 @@ public class OrnamentFactory {
 
             Ornament.Model ironManBottom = new Ornament.Model();
             ironManBottom.setName("ironManBottom");
-            ironManBottom.setModelResId(R.raw.ironman_mask_4_obj);
+            ironManBottom.setModelResId(R.raw.ironman_mask_7_obj);
             ironManBottom.setScale(0.04f);
             ironManBottom.setOffset(0, 0.0f, 0);
 
@@ -95,7 +97,7 @@ public class OrnamentFactory {
 
         } else {
 
-            //上一版本代码
+            //2017-11-17 上一版本代码
 
             Ornament.Model model = new Ornament.Model();
 //-------------------------------------------------------------------------------------------------------------
@@ -105,7 +107,8 @@ public class OrnamentFactory {
 //        model.setRotate(0.0f, 0.0f, 0.0f);
 
 //-------------------------------------------------------------------------------------------------------------
-        /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
             model.setName("ironManTop2");
             model.setModelResId(R.raw.ironman_mask_5_obj);
             model.setScale(0.04f); //*********

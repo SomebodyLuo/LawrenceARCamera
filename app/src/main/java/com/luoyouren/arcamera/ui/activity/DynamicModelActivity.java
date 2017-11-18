@@ -554,52 +554,52 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
 
         @Override
         protected void initScene() {
-            try {
-                final LoaderOBJ parser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.simple_plane_obj);
-                parser.parse();
-                mMask = parser.getParsedObject();
-//                mMask.setScale(0.75f);
-//                mMask.setY(-0.2f);
-//                mMask.setZ(0.4f);
-                mMask.setColor(Color.RED);
-
-                mContainer = new Object3D();
-                mContainer.addChild(mMask);
-                getCurrentScene().addChild(mContainer);
-
-                mGeometry3D = mMask.getGeometry();
-
-                getCurrentScene().getCamera().setZ(5.5);
-
-                FloatBuffer vertBuffer = mGeometry3D.getVertices();
-                IntBuffer indices = (IntBuffer)mGeometry3D.getIndices();
-
-//                for (int i=0; i<vertBuffer.limit(); i++) {
-//                    String type;
-//                    int tmp = i%3;
-//                    if (tmp == 0) {
-//                        type = "x";
-//                    } else if (tmp == 1) {
-//                        type = "y";
-//                    } else {
-//                        type = "z";
-//                    }
-//                    Log.e(TAG, "get vertex No." + i/3 + " " + type + " : " + vertBuffer.get(i));
+//            try {
+//                final LoaderOBJ parser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.simple_plane_obj);
+//                parser.parse();
+//                mMask = parser.getParsedObject();
+////                mMask.setScale(0.75f);
+////                mMask.setY(-0.2f);
+////                mMask.setZ(0.4f);
+//                mMask.setColor(Color.RED);
+//
+//                mContainer = new Object3D();
+//                mContainer.addChild(mMask);
+//                getCurrentScene().addChild(mContainer);
+//
+//                mGeometry3D = mMask.getGeometry();
+//
+//                getCurrentScene().getCamera().setZ(5.5);
+//
+//                FloatBuffer vertBuffer = mGeometry3D.getVertices();
+//                IntBuffer indices = (IntBuffer)mGeometry3D.getIndices();
+//
+////                for (int i=0; i<vertBuffer.limit(); i++) {
+////                    String type;
+////                    int tmp = i%3;
+////                    if (tmp == 0) {
+////                        type = "x";
+////                    } else if (tmp == 1) {
+////                        type = "y";
+////                    } else {
+////                        type = "z";
+////                    }
+////                    Log.e(TAG, "get vertex No." + i/3 + " " + type + " : " + vertBuffer.get(i));
+////                }
+//
+//                for(int i=0; i<mGeometry3D.getNumIndices(); i++) {
+//                    int index = indices.get(i);
+//                    float x = vertBuffer.get(3*index);
+//                    float y = vertBuffer.get(3*index+1);
+//                    float z = vertBuffer.get(3*index+2);
+//                    Log.e(TAG, "get vertex No." + index + " x: " + x + ", y: " + y + ", z: " + z);
 //                }
-
-                for(int i=0; i<mGeometry3D.getNumIndices(); i++) {
-                    int index = indices.get(i);
-                    float x = vertBuffer.get(3*index);
-                    float y = vertBuffer.get(3*index+1);
-                    float z = vertBuffer.get(3*index+2);
-                    Log.e(TAG, "get vertex No." + index + " x: " + x + ", y: " + y + ", z: " + z);
-                }
-
-            } catch (ParsingException e) {
-                e.printStackTrace();
-            }
-
-            getCurrentScene().setBackgroundColor(0);
+//
+//            } catch (ParsingException e) {
+//                e.printStackTrace();
+//            }
+//
+//            getCurrentScene().setBackgroundColor(0);
         }
 
         @Override
