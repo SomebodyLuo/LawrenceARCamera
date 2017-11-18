@@ -163,7 +163,17 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             Rect rect = preProcessRect(faceAction.getFace().getRect(), orientation);
             x = rect.centerX();
             y = rect.centerY();
+            Log.i(TAG, "luoyouren: ------------- x = " + x + "; y = " + y);
 
+            //===================================================== 旋转调整：pitch roll yaw ===============================================
+            //2017-11-18
+            //我们假定头的旋转半径和眼间距相同
+            //公式：dx = x * tan&;
+            float dYaw = eye_dist * 0.00001f - 11000.0f;
+            double headYaw = (yaw > 0) ? yaw : -yaw;
+            float ddYaw = dYaw * (float) Math.tan(headYaw * Math.PI / 180.0f) * 0.55f;  //修正比例系数为0.55
+            Log.i(TAG, "luoyouren: ------------- dYaw = " + dYaw + "; ddYaw = " + ddYaw);
+            x = (yaw > 0) ? (x - ddYaw) : (x + ddYaw);
 
             //================================平移调整：将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
             //2017-11-02 根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y，
@@ -195,19 +205,20 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
             //2017-11-18
             //补偿的实际效果显示为：过度了！不用补偿这个！
-            double headYaw = (yaw > 0) ? yaw : -yaw;
-            double factorYaw = Math.cos(headYaw * Math.PI / 180.0f);        //利用yaw(偏航角)对人脸大小进行补偿
-            Log.i(TAG, "luoyouren: --------------------- factorYaw =  " + factorYaw);
+//            double headYaw = (yaw > 0) ? yaw : -yaw;
+//            double factorYaw = Math.cos(headYaw * Math.PI / 180.0f);        //利用yaw(偏航角)对人脸大小进行补偿
+//            Log.i(TAG, "luoyouren: --------------------- factorYaw =  " + factorYaw);
 
+            //2017-11-18
             //依据： x = L / ( cos& + sin&) --> x^2 = L^2 / (cos& + sin&)^2
             //实际效果也不行！
-            double headRoll = roll + 90;
-            headRoll = (headRoll > 0) ? headRoll : -headRoll;
-            double cosRoll = Math.cos(headRoll * Math.PI / 180.0f);
-            double sinRoll = Math.sin(headRoll * Math.PI / 180.0f);
-            double factorRoll = cosRoll + sinRoll;
-            factorRoll = 1.1f * cosRoll;
-            Log.i(TAG, "luoyouren: --------------------- factorRoll =  " + factorRoll);
+//            double headRoll = roll + 90;
+//            headRoll = (headRoll > 0) ? headRoll : -headRoll;
+//            double cosRoll = Math.cos(headRoll * Math.PI / 180.0f);
+//            double sinRoll = Math.sin(headRoll * Math.PI / 180.0f);
+//            double factorRoll = cosRoll + sinRoll;
+//            factorRoll = 1.1f * cosRoll;
+//            Log.i(TAG, "luoyouren: --------------------- factorRoll =  " + factorRoll);
 
 
             double factor = factorPitch;
@@ -277,6 +288,8 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //            }
 
             //===================================================== 旋转调整：pitch roll yaw ===============================================
+            //2017-11-18
+
 
             //==============================================================================================================================
             //头离屏幕太远，直接不显示——把模型移动到视窗外
