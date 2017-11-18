@@ -213,11 +213,18 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                     case MotionEvent.ACTION_DOWN:
                         mController.clearFilter();
 
-                        // 注意My3DRenderer的尺寸被设置为了IMAGE_WIDTH x IMAGE_HEIGHT
+                        // 注意My3DRenderer的尺寸被设置为了IMAGE_WIDTH x IMAGE_HEIGHT (720x1280)
                         // 另外呢，ObjectColorPicker.java中的pickObject函数中
-                        /*GLES20.glReadPixels(pickerInfo.getX(),
+                        /*
+                        GLES20.glReadPixels(pickerInfo.getX(),
 					picker.mRenderer.getViewportHeight() - pickerInfo.getY(),
-					1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);*/
+					1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+
+					里面getViewportHeight得到的值就是1280。
+
+					那么当点击屏幕后得到的坐标event.x / event.y，是基于VIDEO_WIDTH x VIDEO_HEIGHT (384 x 640)
+					就需要经过比例转换到720x1280坐标系内，如下：
+					    */
 
                         float scaleW = (float) IMAGE_WIDTH / (float) VIDEO_WIDTH ;
                         float scaleH = (float) IMAGE_HEIGHT / (float) VIDEO_HEIGHT;

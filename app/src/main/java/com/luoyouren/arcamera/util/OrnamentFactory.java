@@ -72,12 +72,12 @@ public class OrnamentFactory {
             // for object pick
             ironManTop.setNeedObjectPick(true);
             ironManTop.setBeforeY(0.0f);
-            ironManTop.setAfterY(0.55f);
+            ironManTop.setAfterY(0.25f);
             ironManTop.setBeforeZ(0);
-            ironManTop.setAfterZ(-0.2f);
+            ironManTop.setAfterZ(0.3f);
             ironManTop.setAxisX(1);
             ironManTop.setBeforeAngle(0);
-            ironManTop.setAfterAngle(40);
+            ironManTop.setAfterAngle(50);
 
             Ornament.Model ironManBottom = new Ornament.Model();
             ironManBottom.setName("ironManBottom");
