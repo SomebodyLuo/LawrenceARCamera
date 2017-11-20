@@ -347,7 +347,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
         Log.i("somebodyluo", "moveSelectedObject: mNewObjPos.x = " + mNewObjPos.x + "; mNewObjPos.y = " + mNewObjPos.y);
         mSelectedObject.setX(mNewObjPos.x);
-        mSelectedObject.setY(mNewObjPos.y);
+        mSelectedObject.setY(mNewObjPos.y - 0.15f);
     }
 
     @Override

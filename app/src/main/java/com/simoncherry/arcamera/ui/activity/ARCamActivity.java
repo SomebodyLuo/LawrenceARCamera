@@ -222,12 +222,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                         break;
                     case MotionEvent.ACTION_MOVE:
 
-                        float scaleW = VIDEO_WIDTH / (float) mSurfaceWidth;
-                        float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
+                        //mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
+                        float scaleW = /*VIDEO_WIDTH*/ 720 / (float) mSurfaceWidth;
+                        float scaleH = /*VIDEO_HEIGHT*/ 1244 / (float) mSurfaceHeight;
                         float touchX = event.getX() * scaleW;
                         float touchY = event.getY() * scaleH;
 
-                        onGet3dModelTransition(touchX, touchY, 0.0f);
+                        onGet3dModelTransition(touchX, touchY, 1.0f);
                         mActionText.setText(event.getX() + ", " + event.getY() + "\n");
                         break;
                 }
@@ -242,7 +243,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
 
         // 将Rajawali的SurfaceView的尺寸设为录像的尺寸
-        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);   //sombodyluo
+//        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);   //sombodyluo
 
         mISurfaceRenderer = new My3DRenderer(this);
         ((My3DRenderer) mISurfaceRenderer).setScreenW(IMAGE_WIDTH);
@@ -252,16 +253,16 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    float scaleW = VIDEO_WIDTH / (float) mSurfaceWidth;
-                    float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
-                    float touchX = event.getX() * scaleW;
-                    float touchY = event.getY() * scaleH;
-                    Log.i("sombodyluo", "onTouch: mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
-                    ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
-                } else if (event.getAction() == MotionEvent.ACTION_MOVE){
-                    Log.i("sombodyluo", "onTouch: event.getX() = " + event.getX() + "; event.getY() = " + event.getY());
-                }
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    float scaleW = VIDEO_WIDTH / (float) mSurfaceWidth;
+//                    float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
+//                    float touchX = event.getX() * scaleW;
+//                    float touchY = event.getY() * scaleH;
+//                    Log.i("sombodyluo", "onTouch: mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
+//                    ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+//                } else if (event.getAction() == MotionEvent.ACTION_MOVE){
+//                    Log.i("sombodyluo", "onTouch: event.getX() = " + event.getX() + "; event.getY() = " + event.getY());
+//                }
                 return onTouchEvent(event);
             }
         });
@@ -1000,8 +1001,6 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理3D模型的平移
         final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, pitch, roll, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
-
-
         // 处理人脸关键点——>给面具使用
 //        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
@@ -1012,6 +1011,13 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                /*somebodyluo: mRenderSurface.getWidth() = 720; mRenderSurface.getHeight() = 1244
+                somebodyluo: mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
+                somebodyluo: mSurfaceView.getWidth() = 720; mSurfaceView.getHeight() = 1244*/
+                Log.i("somebodyluo", "mRenderSurface.getWidth() = " + ((org.rajawali3d.view.SurfaceView)mRenderSurface).getWidth() + "; mRenderSurface.getHeight() = " + ((org.rajawali3d.view.SurfaceView)mRenderSurface).getHeight());
+                Log.i("somebodyluo", "mRenderSurface mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
+                Log.i("somebodyluo", "mSurfaceView.getWidth() = " + mSurfaceView.getWidth() + "; mSurfaceView.getHeight() = " + mSurfaceView.getHeight());
                 mTrackText.setText("TRACK: " + value + " MS"
                         + "\nPITCH: " + pitch + "\nROLL: " + roll + "\nYAW: " + yaw + "\nEYE_DIST:" + eye_dist);
 //                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
@@ -1030,7 +1036,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
 //                }
 
-                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
+//                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
             }
         });
     }

@@ -159,11 +159,14 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         x = rect.centerX();
         y = rect.centerY();
 
+        /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
         //人脸的检测图片大小是640x480
-        //但是rajawali的显示区域大小是640x384
+        //但是rajawali的显示区域（视口）大小是640x384
         //所以要换算
-        float scaleW = 384.0f / 480.0f;
-        float scaleH = 640.0f / 640.0f;
+        float scaleW = /*384.0f*/ 720.0f / 480.0f;
+        float scaleH = /*640.0f*/ 1244.0f  / 640.0f;
         float faceCenterX = x * scaleW;
         float faceCenterY = y * scaleH;
 

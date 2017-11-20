@@ -63,7 +63,7 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
 
     private SurfaceView mSurfaceView;
 
-    int faceWidth, faceHeight, l, t, r, b;
+    int faceWidth, faceHeight, faceCenterX, faceCenterY, l, t, r, b;
     private TextView mTrackText, mActionText;
     private ImageView mIvLandmark;
 
@@ -120,6 +120,8 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
         });
     }
 
+
+
     private Runnable initViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -135,24 +137,42 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
                                                 final int headYaw, final int headPitch, final int browJump) {
 //                        handle3dModelRotation(pitch, roll, yaw);
 //                        handle3dModelTransition(faceActions, orientation, eye_dist, yaw);
-                        setLandmarkFilter(faceActions, orientation, mouthAh);
+//                        setLandmarkFilter(faceActions, orientation, mouthAh);
                         final Bitmap bitmap = handleDrawLandMark(faceActions, orientation);
 
                         //luoyouren: show face rect
                         if(faceActions.length > 0)
                         {
-                            faceWidth = faceActions[0].getFace().getRect().width();
-                            faceHeight = faceActions[0].getFace().getRect().height();
-                            l = faceActions[0].getFace().getRect().left;
-                            t = faceActions[0].getFace().getRect().top;
-                            r = faceActions[0].getFace().getRect().right;
-                            b = faceActions[0].getFace().getRect().bottom;
+//                            faceWidth = faceActions[0].getFace().getRect().width();
+//                            faceHeight = faceActions[0].getFace().getRect().height();
+//                            l = faceActions[0].getFace().getRect().left;
+//                            t = faceActions[0].getFace().getRect().top;
+//                            r = faceActions[0].getFace().getRect().right;
+//                            b = faceActions[0].getFace().getRect().bottom;
+
+                            PointF[] points =  preProcessPoints(faceActions[0].getFace().getPointsArray(), orientation);
+                            Rect rect = CalculateRectForPoints(points);
+                            l = rect.left;
+                            t = rect.top;
+                            r = rect.right;
+                            b = rect.bottom;
+                            faceCenterX = rect.centerX();
+                            faceCenterY = rect.centerY();
                         }
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (bitmap != null) {
+                                    /*somebodyluo: mRenderSurface.getWidth() = 720; mRenderSurface.getHeight() = 1132
+                                    somebodyluo: mSurfaceView.getWidth() = 720; mSurfaceView.getHeight() = 1132
+                                    somebodyluo: mIvLandmark.getWidth() = 720; mIvLandmark.getHeight() = 1132
+                                    somebodyluo: bitmap.getWidth() = 720; bitmap.getHeight() = 1132*/
+
+                                    Log.i("somebodyluo", "mRenderSurface.getWidth() = " + ((org.rajawali3d.view.SurfaceView)mRenderSurface).getWidth() + "; mRenderSurface.getHeight() = " + ((org.rajawali3d.view.SurfaceView)mRenderSurface).getHeight());
+                                    Log.i("somebodyluo", "mSurfaceView.getWidth() = " + mSurfaceView.getWidth() + "; mSurfaceView.getHeight() = " + mSurfaceView.getHeight());
+                                    Log.i("somebodyluo", "mIvLandmark.getWidth() = " + mIvLandmark.getWidth() + "; mIvLandmark.getHeight() = " + mIvLandmark.getHeight());
+                                    Log.i("somebodyluo", "bitmap.getWidth() = " + bitmap.getWidth() + "; bitmap.getHeight() = " + bitmap.getHeight());
                                     mIvLandmark.setImageBitmap(bitmap);
                                 }
                                 mTrackText.setText("TRACK: " + value + " MS"
@@ -162,8 +182,11 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
 //                                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
 
                                 //luoyouren: show face rect
+//                                mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
+//                                        "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
                                 mActionText.setText(l + ", " + t + "\n" + r + ", " + b +
-                                        "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
+                                        "\nfaceCenterX: " + faceCenterX + "\nfaceCenterY:" + faceCenterY );
+
                             }
                         });
                     }
@@ -350,65 +373,112 @@ public class DynamicModelActivity extends AppCompatActivity implements FrameCall
         });
     }
 
-    int PREVIEW_WIDTH = 640;
-    int PREVIEW_HEIGHT = 480;
 
+    int REAL_WIDTH = 720;
+    int REAL_HEIGHT = 1132;
     private Bitmap handleDrawLandMark(STMobileFaceAction[] faceActions, int orientation) {
         if(faceActions != null) {
             for(int i=0; i<faceActions.length; i++) {
                 Log.i("Test", "detect faces: "+ faceActions[i].getFace().getRect().toString());
             }
 
-            final Bitmap bitmap = Bitmap.createBitmap(PREVIEW_HEIGHT, PREVIEW_WIDTH, Bitmap.Config.ARGB_8888);
+            //注意
+            /* somebodyluo: mRenderSurface.getWidth() = 720; mRenderSurface.getHeight() = 1132
+            somebodyluo: mSurfaceView.getWidth() = 720; mSurfaceView.getHeight() = 1132
+            somebodyluo: mIvLandmark.getWidth() = 720; mIvLandmark.getHeight() = 1132
+            somebodyluo: bitmap.getWidth() = 720; bitmap.getHeight() = 1132 */
+            final Bitmap bitmap = Bitmap.createBitmap(REAL_WIDTH, REAL_HEIGHT, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
 
-            boolean rotate270 = orientation == 270;
             for (STMobileFaceAction r : faceActions) {
                 Log.i("Test", "-->> face count = "+faceActions.length);
                 Rect rect;
 
                 //=================================================长方形==============================================
-                //----------当前对应图1
-                if (rotate270) {
-                    rect = STUtils.RotateDeg270(r.getFace().getRect(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                } else {
-                    rect = STUtils.RotateDeg90(r.getFace().getRect(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                }
-                //----------此时对应图2
-                if(cameraId == 1) {
-                    int left = rect.left;
-                    rect.left = PREVIEW_HEIGHT - rect.right;
-                    rect.right = PREVIEW_HEIGHT - left;
-                }
-                //----------此时对应图3
+                rect = preProcessRect(r.getFace().getRect(), orientation);
 
                 //=================================================点集==============================================
-                //----------当前对应图1
-                int i = 0;
-                PointF[] points = r.getFace().getPointsArray();
-                for (i = 0; i < points.length; i++) {
-                    if (rotate270) {
-                        points[i] = STUtils.RotateDeg270(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                    } else {
-                        points[i] = STUtils.RotateDeg90(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                    }
-                }
-                //----------此时对应图2
-                for (i = 0; i < points.length; i++) {
-                    if(cameraId == 1) {
-                        points[i].x = PREVIEW_HEIGHT - points[i].x;
-                    }
-                }
-                //----------此时对应图3
+                PointF[] points = preProcessPoints(r.getFace().getPointsArray(), orientation);
 
-                STUtils.drawFaceRect(canvas, rect, PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
-                STUtils.drawPoints(canvas, points, PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
-                STUtils.drawFaceRect(Color.GREEN, canvas, CalculateRectForPoints(points), PREVIEW_HEIGHT, PREVIEW_WIDTH, cameraId == 1);
+                STUtils.drawFaceRect(canvas, rect, REAL_HEIGHT, REAL_WIDTH, cameraId == 1);
+                STUtils.drawPoints(canvas, points, REAL_HEIGHT, REAL_WIDTH, cameraId == 1);
+
+                rect = CalculateRectForPoints(points);
+                STUtils.drawFaceRect(Color.GREEN, canvas, rect, REAL_HEIGHT, REAL_WIDTH, cameraId == 1);
 
                 return bitmap;
             }
         }
         return null;
+    }
+
+    int PREVIEW_WIDTH = 640;
+    int PREVIEW_HEIGHT = 480;
+    public Rect preProcessRect(Rect rect, int orientation)
+    {
+        boolean rotate270 = orientation == 270;
+        //=================================================长方形===================================
+        //----------当前对应图1
+        if (rotate270) {
+            rect = STUtils.RotateDeg270(rect, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        } else {
+            rect = STUtils.RotateDeg90(rect, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        }
+        //----------此时对应图2
+        if(cameraId == 1) {
+            int left = rect.left;
+            rect.left = PREVIEW_HEIGHT - rect.right;
+            rect.right = PREVIEW_HEIGHT - left;
+        }
+        //----------此时对应图3
+
+        //人脸识别的图像大小是: 480x640; 而显示图片的ImageView大小是: 720x1132
+        //需要转换
+        float scaleWidth = 720.0f / 480.0f;
+        float scaleHeight = 1132.0f / 640.0f;
+        rect.left = (int)((float)rect.left * scaleWidth);
+        rect.right = (int)((float)rect.right * scaleWidth);
+        rect.top = (int)((float)rect.top * scaleHeight);
+        rect.bottom = (int)((float)rect.bottom * scaleHeight);
+
+
+        return rect;
+    }
+
+    public PointF[] preProcessPoints(PointF[] points, int orientation)
+    {
+        boolean rotate270 = orientation == 270;
+        //=================================================点集=====================================
+        //----------当前对应图1
+        int i;
+        if (rotate270) {
+            for (i = 0; i < points.length; i++) {
+                points[i] = STUtils.RotateDeg270(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
+            }
+        } else {
+            for (i = 0; i < points.length; i++) {
+                points[i] = STUtils.RotateDeg90(points[i], PREVIEW_WIDTH, PREVIEW_HEIGHT);
+            }
+        }
+        //----------此时对应图2
+        if(cameraId == 1) {
+            for (i = 0; i < points.length; i++) {
+                points[i].x = PREVIEW_HEIGHT - points[i].x;
+            }
+        }
+        //----------此时对应图3
+
+
+        //人脸识别的图像大小是: 480x640; 而显示图片的ImageView大小是: 720x1132
+        //需要转换
+        float scaleWidth = 720.0f / 480.0f;
+        float scaleHeight = 1132.0f / 640.0f;
+        for (i = 0; i < points.length; i++) {
+            points[i].x = points[i].x * scaleWidth;
+            points[i].y = points[i].y * scaleHeight;
+        }
+
+        return points;
     }
 
     private Rect CalculateRectForPoints(PointF[] pointF)

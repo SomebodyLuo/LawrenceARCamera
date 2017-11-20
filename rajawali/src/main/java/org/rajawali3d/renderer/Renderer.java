@@ -343,6 +343,10 @@ public abstract class Renderer implements ISurfaceRenderer {
         mDefaultViewportWidth = width;
         mDefaultViewportHeight = height;
 
+        /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
+
         Log.i("sombodyluo", "setViewPort: mDefaultViewportWidth = " + mDefaultViewportWidth + "; mDefaultViewportHeight = " + mDefaultViewportHeight);
         Log.i("sombodyluo", "setViewPort: mOverrideViewportWidth = " + mOverrideViewportWidth + "; mOverrideViewportHeight = " + mOverrideViewportHeight);
         final int wViewport = mOverrideViewportWidth > -1 ? mOverrideViewportWidth : mDefaultViewportWidth;
@@ -503,6 +507,9 @@ public abstract class Renderer implements ISurfaceRenderer {
         if (width != mCurrentViewportWidth || height != mCurrentViewportHeight) {
             mCurrentViewportWidth = width;
             mCurrentViewportHeight = height;
+            /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
             Log.i("sombodyluo", "setViewPort: mCurrentViewportWidth = " + mCurrentViewportWidth + "; mCurrentViewportHeight = " + mCurrentViewportHeight);
             mCurrentScene.updateProjectionMatrix(width, height);
             GLES20.glViewport(0, 0, width, height);
