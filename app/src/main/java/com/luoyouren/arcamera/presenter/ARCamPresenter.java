@@ -165,15 +165,22 @@ public class ARCamPresenter implements ARCamContract.Presenter {
             y = rect.centerY();
             Log.i(TAG, "luoyouren: ------------- x = " + x + "; y = " + y);
 
-            //===================================================== 旋转调整：pitch roll yaw ===============================================
+            //===================================================== 用旋转修正平移：：pitch roll yaw ===============================================
             //2017-11-18
             //我们假定头的旋转半径和眼间距相同
-            //公式：dx = x * tan&;
+            //公式：ddYaw = R * sin& = eye_dist / cos& * sin& = eye_dist * tan&;
             float dYaw = eye_dist * 0.00001f - 11000.0f;
-            double headYaw = (yaw > 0) ? yaw : -yaw;
-            float ddYaw = dYaw * (float) Math.tan(headYaw * Math.PI / 180.0f) * 0.55f;  //修正比例系数为0.55
+            double correctYaw = (yaw > 0) ? yaw : -yaw;
+            float ddYaw = dYaw * (float) Math.tan(correctYaw * Math.PI / 180.0f) * 0.5f;  //修正比例系数为0.55
             Log.i(TAG, "luoyouren: ------------- dYaw = " + dYaw + "; ddYaw = " + ddYaw);
             x = (yaw > 0) ? (x - ddYaw) : (x + ddYaw);
+
+            //公式：ddPitch = R * sin$ = eye_dist / cos& * sin$;
+            double correctPitch = (pitch > 0) ? pitch : -pitch;
+            float ddPitch = dYaw / (float)Math.cos(correctYaw * Math.PI / 180.0f) * (float)Math.sin(correctPitch * Math.PI / 180.0f) * 0.4f;
+            Log.i(TAG, "luoyouren: ------------- correctPitch = " + correctPitch + "; ddPitch = " + ddPitch);
+            y = (pitch > 0) ? (y - ddPitch) : (y + ddPitch);
+
 
             //================================平移调整：将屏幕坐标系下的坐标转换成OpenGL坐标系下的坐标====================================
             //2017-11-02 根据excel表格拟合出来的表达式，再根据实际效果调整得出x/y，
