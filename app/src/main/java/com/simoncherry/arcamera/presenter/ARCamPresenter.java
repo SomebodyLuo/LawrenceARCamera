@@ -167,33 +167,26 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         float faceCenterX = x * scaleW;
         float faceCenterY = y * scaleH;
 
-        //================================缩放调整：z轴说明的是人脸的大小，即人脸离手机的距离=======================================
-        //下面通过人脸的大小缩放比来确定Scale的参数
+        //================================ 缩放调整 =======================================
+        //下面通过人脸面积大小缩放比来确定Scale的参数
         /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
         /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
         /* 2017-11-20 修改了模型位置，mContainer.setScale(1.08f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10900时，刚好吻合模型。*/
 
         //2017-11-20
-        Rect rect2 = preProcessRect(faceAction.getFace().getRect(), orientation);
-        float area = rect2.width() * rect2.height();
+//        Rect rect2 = preProcessRect(faceAction.getFace().getRect(), orientation);     //使用STFaceDetect返回的Rect
+        float area = rect.width() * rect.height();
+        Log.i(TAG, "luoyouren: ------------- " + "; area = " + area);
 
         //对人脸矩形的面积进行补偿：pitch roll yaw
-        double headPitch = (pitch > 0) ? pitch : -pitch;
-        headPitch = 90 - headPitch;
-        double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
-        Log.i(TAG, "luoyouren: ------------- factor =  " + factor + "; area = " + area);
-        area = area / (float) factor;
+//        double headPitch = (pitch > 0) ? pitch : -pitch;
+//        headPitch = 90 - headPitch;
+//        double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
+//        Log.i(TAG, "luoyouren: ------------- factor =  " + factor );
+//        area = area / (float) factor;
 
-        if (true) {
-            //平方关系: 比较合适
-            z = 5.5f * 5.5f * mStandardArea / area;
-            // 依据: (l x h) / (L x H) = D^2 / d^2;
-            z = 5.5f - (float) Math.sqrt((double) z);
-        }else
-        {
-            //线性关系
-            z = - mStandardArea / area;
-        }
+        //面积跟缩放比(scale)是平方关系
+        z = (float) Math.sqrt((double) area / mStandardArea);
 
         Log.i("somebodyluo", "handle3dModelTransition: x= " + x + ", y= " + y + ", z= " + z);
 

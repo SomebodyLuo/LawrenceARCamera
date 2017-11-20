@@ -372,21 +372,25 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 }
 
                 if (mOrnamentModel.isEnableScale()) {
-                    String modelName = mObject3DList.get(0).getName();
-                    if((modelName != null) && (modelName.equals("ironManTop2")))
+//                    String modelName = mObject3DList.get(0).getName();
+//                    if((modelName != null) && (modelName.equals("ironManTop2")))
+//                    {
+//                        //钢铁侠先不进行缩放
+//                        Log.i(TAG, "123 initOrnamentParams");
+//
+//                        // 处理3D模型的缩放
+////                        mContainer.setScale(mScale);
+//
+//                        // 通过移动Z轴来实现缩放
+//                        mContainer.setZ(mScale);
+//                    }
+//                    else
                     {
-                        //钢铁侠先不进行缩放
-                        Log.i(TAG, "123 initOrnamentParams");
-
                         // 处理3D模型的缩放
-//                        mContainer.setScale(mScale);
-
-                        // 通过移动Z轴来实现缩放
-                        mContainer.setZ(mScale);
-                    }
-                    else
-                    {
-                        // 处理3D模型的缩放
+                        /*
+                        因为x/y坐标基本是精确的，但是由于Z轴的运动，使得在DEPTH_TEST开启时，会产生类似x/y轴运动的效果，其实是近大远小而已。
+                        所以我们试试，不给Z轴运动，而是对模型进行放大、缩小！
+                        */
                         mContainer.setScale(mScale);
                     }
                 }
