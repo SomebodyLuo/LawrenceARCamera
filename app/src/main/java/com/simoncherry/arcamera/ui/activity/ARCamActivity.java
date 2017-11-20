@@ -222,6 +222,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                         break;
                     case MotionEvent.ACTION_MOVE:
 
+                        //2017-11-20
                         //mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
                         float scaleW = /*VIDEO_WIDTH*/ 720 / (float) mSurfaceWidth;
                         float scaleH = /*VIDEO_HEIGHT*/ 1244 / (float) mSurfaceHeight;

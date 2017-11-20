@@ -159,6 +159,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         x = rect.centerX();
         y = rect.centerY();
 
+        //2017-11-20
         /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
         sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
         sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
