@@ -233,31 +233,33 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         // 方向光
         directionalLight = new DirectionalLight(0.0f, 0.0f, -1.0);
         directionalLight.setColor(1.0f, 1.0f, 1.0f);
-        directionalLight.setPower(0.5f);
+        directionalLight.setPower(0.8f);
         getCurrentScene().addLight(directionalLight);
 
+        float radiu = 12.0f;
+        float power = 3.0f;
         // 三盏点光源
         pointLightLeft = new PointLight();
-        pointLightLeft.setPosition(-20.0f, -10.2f, 0.0f);
+        pointLightLeft.setPosition(-radiu, 0.0f, 0.0f);
         pointLightLeft.setColor(1.0f, 1.0f, 1.0f);
-        pointLightLeft.setPower(15.0f);
+        pointLightLeft.setPower(power);
 
         pointLightMid = new PointLight();
-        pointLightMid.setPosition(0.0f, -10.2f, 25.0f);
+        pointLightMid.setPosition(0.0f, 0.0f, radiu);
         pointLightMid.setColor(1.0f, 1.0f, 1.0f);
-        pointLightMid.setPower(5.0f);
+        pointLightMid.setPower(power);
 
         pointLightRight = new PointLight();
-        pointLightRight.setPosition(20.0f, -10.2f, 0.0f);
+        pointLightRight.setPosition(radiu, 0.0f, 0.0f);
         pointLightRight.setColor(1.0f, 1.0f, 1.0f);
-        pointLightRight.setPower(15.0f);
+        pointLightRight.setPower(power);
 
         pointLightUp = new PointLight();
-        pointLightUp.setPosition(0.0f, 40.0f, 0.0f);
+        pointLightUp.setPosition(0.0f, radiu, 0.0f);
         pointLightUp.setColor(1.0f, 1.0f, 1.0f);
-        pointLightUp.setPower(15.0f);
+        pointLightUp.setPower(power);
 
-        Object3D lightContainer;
+//        Object3D lightContainer;
 
         getCurrentScene().addLight(pointLightLeft);
         getCurrentScene().addLight(pointLightMid);
@@ -267,8 +269,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         try {
             mContainer = new Object3D();
             getCurrentScene().addChild(mContainer);
-            getCurrentScene().getCamera().setZ(5.5);	//original
-//			getCurrentScene().getCamera().setZ(105.5);
+//            getCurrentScene().getCamera().setZ(5.5);	//original
+			getCurrentScene().getCamera().setZ(105.5);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -392,10 +394,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                 if (mOrnamentModel.isEnableTransition()) {
 
                     // 灵感来自于Rajawali的拖拽物体demo例程
-                    if (mContainer.getChildAt(0) != null)
-                    {
-                        moveSelectedObject(mContainer.getChildAt(0), mTransX, mTransY);
-                    }
+                    moveSelectedObject(mContainer, mTransX, mTransY);
                 }
             }
 
@@ -945,7 +944,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         }
 
         mContainer.setTransparent(false);
-        mContainer.setScale(1.0f);
+        /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
+        /* 2017-11-20 修改了模型位置，mContainer.setScale(1.08f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10900时，刚好吻合模型。*/
+        mContainer.setScale(1.08f, 1.0f, 1.0f);
         mContainer.setRotation(0, 0, 0);
         mContainer.setPosition(0, 0, 0);
 

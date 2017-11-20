@@ -141,7 +141,7 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 //        mView.onGetPointsPosition(faceActions[0].getFace().getRect());
     }
 
-    private final float mStandardArea = 11877.0f;
+    private float mStandardArea = 10900.0f;
 
     // 处理3D模型的平移
     @Override
@@ -151,13 +151,13 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
         STMobileFaceAction faceAction = faceActions[0];
 
-        float x, y, z;
+        float x = 0.0f, y = 0.0f, z = 0.0f;
+
+        //2017-11-16
         PointF[] pointFs = preProcessPoints(faceAction.getFace().getPointsArray(), orientation);
         Rect rect = CalculateRectForPoints(pointFs);
         x = rect.centerX();
         y = rect.centerY();
-
-        z = 0.0f;
 
         //人脸的检测图片大小是640x480
         //但是rajawali的显示区域大小是640x384
@@ -169,14 +169,19 @@ public class ARCamPresenter implements ARCamContract.Presenter {
 
         //================================缩放调整：z轴说明的是人脸的大小，即人脸离手机的距离=======================================
         //下面通过人脸的大小缩放比来确定Scale的参数
-            /*getCamera().setZ(5.5), setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
-        float area = rect.width() * rect.height();
+        /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
+        /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
+        /* 2017-11-20 修改了模型位置，mContainer.setScale(1.08f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10900时，刚好吻合模型。*/
+
+        //2017-11-20
+        Rect rect2 = preProcessRect(faceAction.getFace().getRect(), orientation);
+        float area = rect2.width() * rect2.height();
 
         //对人脸矩形的面积进行补偿：pitch roll yaw
         double headPitch = (pitch > 0) ? pitch : -pitch;
         headPitch = 90 - headPitch;
         double factor =  Math.sin(headPitch * Math.PI / 180.0f);    //利用pitch(俯仰角)对人脸大小进行补偿
-        Log.i(TAG, "luoyouren: ------------------------------------------------------------------------------------- factor =  " + factor);
+        Log.i(TAG, "luoyouren: ------------- factor =  " + factor + "; area = " + area);
         area = area / (float) factor;
 
         if (true) {

@@ -452,6 +452,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mOrnaments.addAll(OrnamentFactory.getPresetMask());
         mOrnamentAdapter.notifyDataSetChanged();
 
+        //APP启动自动加载Ironman mask
         mOrnamentAdapter.onItemClickListener.onItemClick(1);
     }
 
@@ -1002,7 +1003,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
 
         // 处理人脸关键点——>给面具使用
-        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
         //luoyouren: 处理人脸长方形
 //        mPresenter.handelFacePoints(faceActions);
