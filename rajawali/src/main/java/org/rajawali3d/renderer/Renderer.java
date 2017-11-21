@@ -343,9 +343,11 @@ public abstract class Renderer implements ISurfaceRenderer {
         mDefaultViewportWidth = width;
         mDefaultViewportHeight = height;
 
-        /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+        /* 2017-11-19
+        sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
         sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
         sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
+        //2017-11-21 rajawali的显示区域（视口）大小是720x1244
 
         Log.i("sombodyluo", "setViewPort: mDefaultViewportWidth = " + mDefaultViewportWidth + "; mDefaultViewportHeight = " + mDefaultViewportHeight);
         Log.i("sombodyluo", "setViewPort: mOverrideViewportWidth = " + mOverrideViewportWidth + "; mOverrideViewportHeight = " + mOverrideViewportHeight);
@@ -507,9 +509,16 @@ public abstract class Renderer implements ISurfaceRenderer {
         if (width != mCurrentViewportWidth || height != mCurrentViewportHeight) {
             mCurrentViewportWidth = width;
             mCurrentViewportHeight = height;
+            //2017-11-19 rajawali的显示区域（视口）大小是384x640
             /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
-        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
-        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
+            sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+            sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
+
+            //2017-11-21 rajawali的显示区域（视口）大小是720x1244
+            /*sombodyluo: setViewPort: mDefaultViewportWidth = 720; mDefaultViewportHeight = 1244
+            sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+            sombodyluo: setViewPort: mCurrentViewportWidth = 720; mCurrentViewportHeight = 1244*/
+
             Log.i("sombodyluo", "setViewPort: mCurrentViewportWidth = " + mCurrentViewportWidth + "; mCurrentViewportHeight = " + mCurrentViewportHeight);
             mCurrentScene.updateProjectionMatrix(width, height);
             GLES20.glViewport(0, 0, width, height);

@@ -212,9 +212,46 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                float scaleW;
+                float scaleH;
+                float touchX;
+                float touchY;
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mController.clearFilter();
+
+                        //2017-11-19
+                        /*
+                        sombodyluo: onGlobalLayout: mSurfaceWidth = 720; mSurfaceHeight = 1244
+
+                        sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+                        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+                        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640
+                        */
+
+                        // ObjectColorPicker.java中的pickObject函数中
+                        /*
+                        GLES20.glReadPixels(pickerInfo.getX(),
+					    picker.mRenderer.getViewportHeight() - pickerInfo.getY(),
+					    1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+
+					    里面getViewportHeight得到的值是基于ViewPort坐标。
+
+					    那么当点击屏幕后得到的坐标event.x / event.y，是基于720x1244的，
+					    就需要经过比例转换到ViewPort坐标系内，如下：
+					    */
+
+                        //================================触摸的点坐标系永远都是: 720x1244==================================
+                        //mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
+                        scaleW = VIDEO_WIDTH /*720*/ / (float) mSurfaceWidth;             //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
+                        scaleH = VIDEO_HEIGHT /*1244*/ / (float) mSurfaceHeight;          //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
+                        touchX = event.getX() /** scaleW*/;
+                        touchY = event.getY() /** scaleH*/; //还是没有弄明白！！！！！！！！！！！！！！与
+                        ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
+
+                        Log.i("somebodyluo", "initSurfaceView MotionEvent.ACTION_DOWN");
+
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
@@ -223,14 +260,16 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                     case MotionEvent.ACTION_MOVE:
 
                         //2017-11-20
-                        //mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
-                        float scaleW = /*VIDEO_WIDTH*/ 720 / (float) mSurfaceWidth;
-                        float scaleH = /*VIDEO_HEIGHT*/ 1244 / (float) mSurfaceHeight;
-                        float touchX = event.getX() * scaleW;
-                        float touchY = event.getY() * scaleH;
+//                        mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
+//                        scaleW = VIDEO_WIDTH /*720*/ / (float) mSurfaceWidth;
+//                        scaleH = VIDEO_HEIGHT /*1244*/ / (float) mSurfaceHeight;
+//                        touchX = event.getX() * scaleW;
+//                        touchY = event.getY() * scaleH;
+//
+//                        onGet3dModelTransition(touchX, touchY, 1.0f);
+//                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
 
-                        onGet3dModelTransition(touchX, touchY, 1.0f);
-                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
+
                         break;
                 }
                 return true;
@@ -244,7 +283,15 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setTransparent(true);
 
         // 将Rajawali的SurfaceView的尺寸设为录像的尺寸
-//        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);   //sombodyluo
+        // 默认不设置的话，就是720.0 x 1244.0
+        // 注意这里关系到，OpenGL的ViewPort大小，慎重！！！
+        //2017-11-19
+        /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
+        sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
+        sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
+        //人脸的检测图片大小是640x480
+        //但是rajawali的显示区域（视口）大小是384x640
+        ((org.rajawali3d.view.SurfaceView) mRenderSurface).getHolder().setFixedSize(VIDEO_WIDTH, VIDEO_HEIGHT);   //sombodyluo
 
         mISurfaceRenderer = new My3DRenderer(this);
         ((My3DRenderer) mISurfaceRenderer).setScreenW(IMAGE_WIDTH);
@@ -254,16 +301,15 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         ((org.rajawali3d.view.SurfaceView) mRenderSurface).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    float scaleW = VIDEO_WIDTH / (float) mSurfaceWidth;
-//                    float scaleH = VIDEO_HEIGHT / (float) mSurfaceHeight;
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    float scaleW = VIDEO_WIDTH / (float) IMAGE_WIDTH;
+//                    float scaleH = VIDEO_HEIGHT / (float) IMAGE_HEIGHT;
 //                    float touchX = event.getX() * scaleW;
 //                    float touchY = event.getY() * scaleH;
-//                    Log.i("sombodyluo", "onTouch: mSurfaceWidth = " + mSurfaceWidth + "; mSurfaceHeight = " + mSurfaceHeight);
 //                    ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
-//                } else if (event.getAction() == MotionEvent.ACTION_MOVE){
-//                    Log.i("sombodyluo", "onTouch: event.getX() = " + event.getX() + "; event.getY() = " + event.getY());
-//                }
+
+                    Log.i("somebodyluo", "initRajawaliSurface MotionEvent.ACTION_DOWN");
+                }
                 return onTouchEvent(event);
             }
         });
@@ -1037,7 +1083,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
 //                }
 
-                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
+//                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
             }
         });
     }

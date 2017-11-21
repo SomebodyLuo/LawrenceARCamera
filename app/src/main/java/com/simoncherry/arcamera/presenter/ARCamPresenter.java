@@ -161,8 +161,6 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         Log.i("somebodyluo", "1----------------------------- x= " + x + ", y= " + y);
 
         //===================================================== 用旋转修正平移：：pitch roll yaw ===============================================
-        //这里其实有个问题：
-        //
         //2017-11-21
         //我们假定头的旋转半径和眼间距相同
         //公式：ddYaw = R * sin& = eye_dist / cos& * sin& = eye_dist * tan&;
@@ -227,15 +225,15 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         Log.i("somebodyluo", "2----------------------------- x= " + x + ", y= " + y);
 
 
-        //2017-11-20
+        //2017-11-19
         /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
         sombodyluo: setViewPort: mOverrideViewportWidth = -1; mOverrideViewportHeight = -1
         sombodyluo: setViewPort: mCurrentViewportWidth = 384; mCurrentViewportHeight = 640*/
         //人脸的检测图片大小是640x480
-        //但是rajawali的显示区域（视口）大小是640x384
+        //但是rajawali的显示区域（视口）大小是384x640
         //所以要换算
-        float scaleW = /*384.0f*/ 720.0f / 480.0f;
-        float scaleH = /*640.0f*/ 1244.0f  / 640.0f;
+        float scaleW = 384.0f /*720.0f*/ / 480.0f;
+        float scaleH = 640.0f /*1244.0f*/  / 640.0f;
         float faceCenterX = x * scaleW;
         float faceCenterY = y * scaleH;
 

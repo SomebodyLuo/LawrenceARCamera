@@ -15,6 +15,7 @@ package org.rajawali3d.util;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -95,6 +96,7 @@ public class ObjectColorPicker implements IObjectPicker {
 			final ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4);
 			pixelBuffer.order(ByteOrder.nativeOrder());
 
+			Log.i("sombodyluo", "pickObject: pickerInfo.getX() = " + pickerInfo.getX() + "; pickerInfo.getY() = " + pickerInfo.getY() + "; picker.mRenderer.getViewportHeight() = " + picker.mRenderer.getViewportHeight());
 			GLES20.glReadPixels(pickerInfo.getX(),
 					picker.mRenderer.getViewportHeight() - pickerInfo.getY(),
 					1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
