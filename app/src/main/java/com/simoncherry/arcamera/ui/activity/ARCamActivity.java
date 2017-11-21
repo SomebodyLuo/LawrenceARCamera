@@ -1037,7 +1037,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 //                           "\nfaceWidth: " + faceWidth + "\nfaceHeight:" + faceHeight );
 //                }
 
-//                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
+                mActionText.setText(pos.x + ", " + pos.y + ", " + pos.z + "\n");
             }
         });
     }

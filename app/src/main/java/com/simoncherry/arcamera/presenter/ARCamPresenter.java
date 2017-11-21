@@ -158,6 +158,74 @@ public class ARCamPresenter implements ARCamContract.Presenter {
         Rect rect = CalculateRectForPoints(pointFs);
         x = rect.centerX();
         y = rect.centerY();
+        Log.i("somebodyluo", "1----------------------------- x= " + x + ", y= " + y);
+
+        //===================================================== 用旋转修正平移：：pitch roll yaw ===============================================
+        //这里其实有个问题：
+        //
+        //2017-11-21
+        //我们假定头的旋转半径和眼间距相同
+        //公式：ddYaw = R * sin& = eye_dist / cos& * sin& = eye_dist * tan&;
+        float dYaw = eye_dist * 0.00001f - 11000.0f;
+        double correctYaw = yaw;
+        float ddYaw = dYaw * (float) Math.tan(correctYaw * Math.PI / 180.0f) * 0.3f;  //修正比例系数为0.55
+        Log.i(TAG, "luoyouren: ------------- dYaw = " + dYaw + "; ddYaw = " + ddYaw);
+//        x = x - ddYaw;
+
+        //公式：ddPitch = R * sin$ = eye_dist / cos& * sin$;
+        double correctPitch = pitch;
+        float ddPitch = dYaw / (float) Math.cos(correctYaw * Math.PI / 180.0f) * (float) Math.sin(correctPitch * Math.PI / 180.0f) * 0.5f;
+        Log.i(TAG, "luoyouren: ------------- correctPitch = " + correctPitch + "; ddPitch = " + ddPitch);
+//        y = y - ddPitch;
+
+        //2017-11-21 17:00
+        //再把上面的偏移量，根据roll的摆动角度，分量到x / y 轴上面。
+        roll += 90;     // roll的原始实际范围是-30 ~ -150，转换到60 ~ -60范围内
+        double rollRadian = roll * Math.PI / 180.0f;
+        double absRollRadian = (rollRadian > 0) ? rollRadian : -rollRadian;  //求绝对值
+        float sinRollRadian = (float) Math.sin(rollRadian);
+        float cosRollRadian = (float) Math.cos(rollRadian);
+        float sinAbsRollRadian = (float) Math.sin(absRollRadian);
+        float cosAbsRollRadian = (float) Math.cos(absRollRadian);
+
+        double dx, dy;
+        // 于是roll<0说明头左摆，roll>0说明头右摆
+        // 下面的关系都是通过图表分析的，比较费解！
+        if (roll < 0)
+        {
+            {
+                // ddYaw分量
+                dx = ddYaw * cosRollRadian;
+                dy = ddYaw * sinRollRadian;
+                x = x - (float) dx;
+                y = y - (float) dy;
+            }
+            {
+                // ddPitch分量
+                dx = ddPitch * sinAbsRollRadian;
+                dy = ddPitch * cosAbsRollRadian;
+                x = x - (float) dx;
+                y = y - (float) dy;
+            }
+        } else {
+            {
+                // ddYaw分量
+                dx = ddYaw * cosAbsRollRadian;
+                dy = ddYaw * sinAbsRollRadian;
+                x = x - (float) dx;
+                y = y - (float) dy;
+            }
+            {
+                // ddPitch分量
+                dx = ddPitch * sinRollRadian;
+                dy = ddPitch * cosRollRadian;
+                x = x + (float) dx;
+                y = y - (float) dy;
+            }
+        }
+
+        Log.i("somebodyluo", "2----------------------------- x= " + x + ", y= " + y);
+
 
         //2017-11-20
         /*sombodyluo: setViewPort: mDefaultViewportWidth = 384; mDefaultViewportHeight = 640
