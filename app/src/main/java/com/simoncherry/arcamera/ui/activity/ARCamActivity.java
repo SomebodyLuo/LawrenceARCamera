@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraManager;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,6 +75,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -176,6 +179,9 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private boolean mIsNeedFrameCallback = false;
     private View mStreamingView;
     private Handler mStreamingHandler;
+
+    SoundPool mSoundPool;
+    private HashMap<Integer, Integer> soundPoolMap;
 
 
     @Override
@@ -677,11 +683,27 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         return path;
     }
 
+    public static final int KEY_SOUND_A1 = 0;
+    public static final int KEY_SOUND_A2 = 1;
+    private void alert(String s) {
+        Log.i("Alert: ", s + "");
+    }
     // 初始化的Runnable
     private Runnable initViewRunnable = new Runnable() {
         @Override
         public void run() {
 
+            // 加载音效文件
+            mSoundPool = new SoundPool(1, AudioManager.STREAM_ALARM, 0);
+            mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                @Override
+                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                    alert(" " + sampleId);
+                }
+            });
+            soundPoolMap = new HashMap<Integer, Integer>();
+            soundPoolMap.put(KEY_SOUND_A1, mSoundPool.load(mContext, R.raw.ironman_sound, 1));
+//            soundPoolMap.put(KEY_SOUND_A2, mSoundPool.load(mContext, R.raw.a2, 1));
 
 
 
@@ -1039,6 +1061,10 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         }).start();
     }
 
+    private long lastOperateTime = 0;  //上次操作头盔的时间
+    private long curTime = 0;
+    private final long openTimeLimit = 1500;    //再次操作头盔的至少间隔时间
+    private boolean isPicked = false;
     private void onTrackDetectedCallback(final STMobileFaceAction[] faceActions, final int orientation, final int value,
                                          final float pitch, final float roll, final float yaw,
                                          final int eye_dist, final int id, final int eyeBlink, final int mouthAh,
@@ -1048,13 +1074,31 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理3D模型的平移
         final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, pitch, roll, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
-        if (mouthAh == 1)
+        if (mouthAh == 1)   //张嘴，打开头盔
         {
-            ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(true);
+            curTime = System.currentTimeMillis();
+            if ((curTime - lastOperateTime) > openTimeLimit)
+            {
+                if (false == isPicked) {
+                    mSoundPool.play(soundPoolMap.get(KEY_SOUND_A1), 1, 1, 0, 0, 1);
+                    lastOperateTime = curTime;
+                    isPicked = true;
+                    ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(isPicked);
+                }
+            }
         }
-        if (eyeBlink == 1)
+        if (eyeBlink == 1)  //眨眼，闭合头盔
         {
-            ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(false);
+            curTime = System.currentTimeMillis();
+            if ((curTime - lastOperateTime) > openTimeLimit)
+            {
+                if (true == isPicked) {
+                    lastOperateTime = curTime;
+                    mSoundPool.play(soundPoolMap.get(KEY_SOUND_A1), 1, 1, 0, 0, 1);
+                    isPicked = false;
+                    ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(isPicked);
+                }
+            }
         }
 
         // 处理人脸关键点——>给面具使用

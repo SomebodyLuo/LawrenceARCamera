@@ -375,7 +375,6 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //                    String modelName = mObject3DList.get(0).getName();
 //                    if((modelName != null) && (modelName.equals("ironManTop2")))
 //                    {
-//                        //钢铁侠先不进行缩放
 //                        Log.i(TAG, "123 initOrnamentParams");
 //
 //                        // 处理3D模型的缩放
@@ -391,7 +390,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                         因为x/y坐标基本是精确的，但是由于Z轴的运动，使得在DEPTH_TEST开启时，会产生类似x/y轴运动的效果，其实是近大远小而已。
                         所以我们试试，不给Z轴运动，而是对模型进行放大、缩小！
                         */
-                        mContainer.setScale(mScale);
+//                        mContainer.setScale(mScale);
+                        mContainer.setScale(mScale, mScale /** 0.9f*/, mScale);
                     }
                 }
 
@@ -500,6 +500,9 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                     if (model != null && model.isNeedObjectPick()) {
                         boolean isPicked = model.isPicked();
                         if (isPicked) {
+                            // 注意这里，我们可以看出来：
+                            // 如果操作mContainer的position就是整体移动，是基于世界坐标系下的。
+                            // 如果操作mContainer里面的Object3D物体，比如这里的mPickedObject，position移动，是基于模型坐标系（本地坐标系）。
                             mPickedObject.setPosition(model.getAfterX(), model.getAfterY(), model.getAfterZ());
                             mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
                                     model.getAfterAngle());
@@ -965,7 +968,8 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
         /* mContainer.setScale(1.0f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为11877时，刚好吻合模型。*/
         /* mContainer.setScale(1.05f, 0.9f, 0.9f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10700时，刚好吻合模型。*/
         /* 2017-11-20 修改了模型位置，mContainer.setScale(1.08f, 1.0f, 1.0f); getCamera().setZ(5.5); ironMan.setScale(0.04f)这样的参数下，人脸的面积大小为10900时，刚好吻合模型。*/
-        mContainer.setScale(1.08f, 1.0f, 1.0f);
+//        mContainer.setScale(1.08f, 1.0f, 1.0f);   //因为现在使用setScale调整模型大小，所以这里再setScale是没有用的！
+        mContainer.setScale(1.0f);
         mContainer.setRotation(0, 0, 0);
         mContainer.setPosition(0, 0, 0);
 
