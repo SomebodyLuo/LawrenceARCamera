@@ -243,12 +243,12 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
                         //================================触摸的点坐标系永远都是: 720x1244==================================
                         //mRenderSurface mSurfaceWidth = 720; mSurfaceHeight = 1244
-                        scaleW = VIDEO_WIDTH /*720*/ / (float) mSurfaceWidth;             //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
-                        scaleH = VIDEO_HEIGHT /*1244*/ / (float) mSurfaceHeight;          //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
-                        touchX = event.getX() /** scaleW*/;
-                        touchY = event.getY() /** scaleH*/; //还是没有弄明白！！！！！！！！！！！！！！与
-                        ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
-                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
+//                        scaleW = VIDEO_WIDTH /*720*/ / (float) mSurfaceWidth;             //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
+//                        scaleH = VIDEO_HEIGHT /*1244*/ / (float) mSurfaceHeight;          //把触摸坐标系的点坐标，转化成rajawali显示坐标系下，也就是ViewPort的宽高
+//                        touchX = event.getX() /** scaleW*/;
+//                        touchY = event.getY() /** scaleH*/; //还是没有弄明白！！！！！！！！！！！！！！与
+//                        ((My3DRenderer) mISurfaceRenderer).getObjectAt(touchX, touchY);
+//                        mActionText.setText(event.getX() + ", " + event.getY() + "\n");
 
                         Log.i("somebodyluo", "initSurfaceView MotionEvent.ACTION_DOWN");
 
@@ -1048,6 +1048,15 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
         // 处理3D模型的平移
         final Vector3 pos = mPresenter.handle3dModelTransition(faceActions, orientation, eye_dist, pitch, roll, yaw, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
+        if (mouthAh == 1)
+        {
+            ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(true);
+        }
+        if (eyeBlink == 1)
+        {
+            ((My3DRenderer) mISurfaceRenderer).setIronmanPicked(false);
+        }
+
         // 处理人脸关键点——>给面具使用
 //        mPresenter.handleFaceLandmark(faceActions, orientation, mouthAh, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
@@ -1067,8 +1076,8 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
                 Log.i("somebodyluo", "mSurfaceView.getWidth() = " + mSurfaceView.getWidth() + "; mSurfaceView.getHeight() = " + mSurfaceView.getHeight());
                 mTrackText.setText("TRACK: " + value + " MS"
                         + "\nPITCH: " + pitch + "\nROLL: " + roll + "\nYAW: " + yaw + "\nEYE_DIST:" + eye_dist);
-//                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
-//                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
+                mActionText.setText("ID:" + id + "\nEYE_BLINK:" + eyeBlink + "\nMOUTH_AH:"
+                        + mouthAh + "\nHEAD_YAW:" + headYaw + "\nHEAD_PITCH:" + headPitch + "\nBROW_JUMP:" + browJump);
 
                 //luoyouren: show face rect
 //                if(faceActions.length > 0)

@@ -522,6 +522,20 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     public void onTouchEvent(MotionEvent event) {
     }
 
+    public void setIronmanPicked(boolean isPicked)
+    {
+        if (mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0)
+        {
+            List<Ornament.Model> modelList = mOrnamentModel.getModelList();
+            Ornament.Model model = modelList.get(0);
+            if (model != null && model.getName() == "ironManTop2" && model.isNeedObjectPick())
+            {
+                mPickedObject = mObject3DList.get(0);
+                model.setPicked(isPicked);
+            }
+        }
+    }
+
     @Override
     public void onObjectPicked(@NonNull Object3D object) {
         Log.i(TAG, "onObjectPicked: " + object.getName());
