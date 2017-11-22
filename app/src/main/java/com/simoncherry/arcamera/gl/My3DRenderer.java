@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 
 import com.simoncherry.arcamera.model.DynamicPoint;
 import com.simoncherry.arcamera.model.Ornament;
@@ -26,6 +27,11 @@ import com.simoncherry.arcamera.util.OrnamentFactory;
 
 import org.rajawali3d.Geometry3D;
 import org.rajawali3d.Object3D;
+import org.rajawali3d.animation.Animation;
+import org.rajawali3d.animation.Animation3D;
+import org.rajawali3d.animation.AnimationGroup;
+import org.rajawali3d.animation.RotateOnAxisAnimation;
+import org.rajawali3d.animation.TranslateAnimation3D;
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.lights.PointLight;
 import org.rajawali3d.loader.LoaderOBJ;
@@ -503,13 +509,19 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                             // 注意这里，我们可以看出来：
                             // 如果操作mContainer的position就是整体移动，是基于世界坐标系下的。
                             // 如果操作mContainer里面的Object3D物体，比如这里的mPickedObject，position移动，是基于模型坐标系（本地坐标系）。
-                            mPickedObject.setPosition(model.getAfterX(), model.getAfterY(), model.getAfterZ());
-                            mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
-                                    model.getAfterAngle());
+
+//                            mPickedObject.setPosition(model.getAfterX(), model.getAfterY(), model.getAfterZ());
+//                            mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
+//                                    model.getAfterAngle());
+
+
+
                         } else {
-                            mPickedObject.setPosition(model.getBeforeX(), model.getBeforeY(), model.getBeforeZ());
-                            mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
-                                    model.getBeforeAngle());
+//                            mPickedObject.setPosition(model.getBeforeX(), model.getBeforeY(), model.getBeforeZ());
+//                            mPickedObject.setRotation(model.getAxisX(), model.getAxisY(), model.getAxisZ(),
+//                                    model.getBeforeAngle());
+
+
                         }
                     }
                 }
@@ -525,6 +537,20 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
     public void onTouchEvent(MotionEvent event) {
     }
 
+//    public void setIronmanPicked(boolean isPicked)
+//    {
+//        if (mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0)
+//        {
+//            List<Ornament.Model> modelList = mOrnamentModel.getModelList();
+//            Ornament.Model model = modelList.get(0);
+//            if (model != null && model.getName() == "ironManTop2" && model.isNeedObjectPick())
+//            {
+//                mPickedObject = mObject3DList.get(0);
+//                model.setPicked(isPicked);
+//            }
+//        }
+//    }
+
     public void setIronmanPicked(boolean isPicked)
     {
         if (mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0)
@@ -534,7 +560,57 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
             if (model != null && model.getName() == "ironManTop2" && model.isNeedObjectPick())
             {
                 mPickedObject = mObject3DList.get(0);
-                model.setPicked(isPicked);
+//                model.setPicked(isPicked);
+
+                if (isPicked)
+                {
+                    // 打开动画
+                    AnimationGroup mAnimationGroup = new AnimationGroup();
+                    mAnimationGroup.setRepeatMode(Animation.RepeatMode.NONE);
+                    mAnimationGroup.setRepeatCount(1);
+
+                    Animation3D anim;
+
+                    anim = new TranslateAnimation3D(new Vector3(0, 0, 0),
+                            new Vector3(0, 0.25, 0.3));
+                    anim.setDurationMilliseconds(800);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new BounceInterpolator());
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    anim = new RotateOnAxisAnimation(Vector3.Axis.X, 0, 50);
+                    anim.setDurationMilliseconds(800);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    getCurrentScene().registerAnimation(mAnimationGroup);
+                    mAnimationGroup.play();
+                } else {
+                    // 闭合动画
+                    AnimationGroup mAnimationGroup = new AnimationGroup();
+                    mAnimationGroup.setRepeatMode(Animation.RepeatMode.NONE);
+                    mAnimationGroup.setRepeatCount(1);
+
+                    Animation3D anim;
+
+                    anim = new RotateOnAxisAnimation(Vector3.Axis.X, 0, -50);
+                    anim.setDurationMilliseconds(800);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    anim = new TranslateAnimation3D(new Vector3(0, 0, 0));
+                    anim.setDurationMilliseconds(800);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new BounceInterpolator());
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    getCurrentScene().registerAnimation(mAnimationGroup);
+                    mAnimationGroup.play();
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.simoncherry.arcamera.util;
 
 import android.graphics.Color;
+import android.view.animation.BounceInterpolator;
 
 import com.simoncherry.arcamera.R;
 import com.simoncherry.arcamera.gl.TextureController;
@@ -10,9 +11,15 @@ import com.simoncherry.arcamera.rajawali.CustomVertexShaderMaterialPlugin;
 import com.simoncherry.arcamera.ui.adapter.OrnamentAdapter;
 
 import org.rajawali3d.Object3D;
+import org.rajawali3d.animation.Animation;
+import org.rajawali3d.animation.Animation3D;
+import org.rajawali3d.animation.AnimationGroup;
+import org.rajawali3d.animation.RotateOnAxisAnimation;
+import org.rajawali3d.animation.TranslateAnimation3D;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.plugins.IMaterialPlugin;
+import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.NPrism;
 import org.rajawali3d.primitives.Plane;
 import org.rajawali3d.primitives.PointSprite;
@@ -27,6 +34,13 @@ import java.util.List;
 
 public class OrnamentFactory {
     public final static int NO_COLOR = 2333;
+//    public static AnimationGroup mAnimationGroup = null;
+
+//    public static AnimationGroup getIronmanAnimGroup()
+//    {
+//        return mAnimationGroup;
+//    }
+
 
     public static List<Ornament> getPresetOrnament() {
         List<Ornament> ornaments = new ArrayList<>();
@@ -100,6 +114,8 @@ public class OrnamentFactory {
             modelList.add(ironManBottom);
             ornament.setModelList(modelList);
             ornament.setToastMsg("点击头盔");
+
+
 
         } else {
 

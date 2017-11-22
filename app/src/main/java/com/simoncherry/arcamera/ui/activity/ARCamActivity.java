@@ -66,6 +66,7 @@ import com.simoncherry.arcamera.util.OrnamentFactory;
 import com.simoncherry.arcamera.util.PermissionUtils;
 
 import org.rajawali3d.Object3D;
+import org.rajawali3d.animation.AnimationGroup;
 import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.renderer.ISurfaceRenderer;
 import org.rajawali3d.view.ISurface;
@@ -180,9 +181,12 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
     private View mStreamingView;
     private Handler mStreamingHandler;
 
+    // 音效
     SoundPool mSoundPool;
     private HashMap<Integer, Integer> soundPoolMap;
 
+    // 动画
+    private AnimationGroup animGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
