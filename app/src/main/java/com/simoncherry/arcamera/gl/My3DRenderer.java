@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.simoncherry.arcamera.model.DynamicPoint;
 import com.simoncherry.arcamera.model.Ornament;
@@ -551,6 +552,7 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 //        }
 //    }
 
+    private final int animationPeriod = 650;
     public void setIronmanPicked(boolean isPicked)
     {
         if (mOrnamentModel != null && mObject3DList != null && mObject3DList.size() > 0)
@@ -571,17 +573,30 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
                     Animation3D anim;
 
-                    anim = new TranslateAnimation3D(new Vector3(0, 0, 0),
-                            new Vector3(0, 0.25, 0.3));
-                    anim.setDurationMilliseconds(800);
+                    anim = new TranslateAnimation3D(new Vector3(0, 0, 0), new Vector3(0, 0, 2.5));
+                    anim.setDurationMilliseconds(animationPeriod);
                     anim.setTransformable3D(mPickedObject);
-                    anim.setInterpolator(new BounceInterpolator());
+                    anim.setInterpolator(new LinearInterpolator());
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    anim = new TranslateAnimation3D(new Vector3(0, 0, 2.5), new Vector3(0, 0.2, 2.5));
+                    anim.setDurationMilliseconds(animationPeriod);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new LinearInterpolator());
                     anim.setRepeatCount(1);
                     mAnimationGroup.addAnimation(anim);
 
                     anim = new RotateOnAxisAnimation(Vector3.Axis.X, 0, 50);
-                    anim.setDurationMilliseconds(800);
+                    anim.setDurationMilliseconds(animationPeriod);
                     anim.setTransformable3D(mPickedObject);
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    anim = new TranslateAnimation3D(new Vector3(0, 0.2, 2.5), new Vector3(0, 0.25, 0.3));
+                    anim.setDurationMilliseconds(animationPeriod);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new LinearInterpolator());
                     anim.setRepeatCount(1);
                     mAnimationGroup.addAnimation(anim);
 
@@ -595,16 +610,30 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
                     Animation3D anim;
 
+                    anim = new TranslateAnimation3D(new Vector3(0, 0.25, 0.3), new Vector3(0, 0.2, 2.5));
+                    anim.setDurationMilliseconds(animationPeriod);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new LinearInterpolator());
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
                     anim = new RotateOnAxisAnimation(Vector3.Axis.X, 0, -50);
-                    anim.setDurationMilliseconds(800);
+                    anim.setDurationMilliseconds(animationPeriod);
                     anim.setTransformable3D(mPickedObject);
                     anim.setRepeatCount(1);
                     mAnimationGroup.addAnimation(anim);
 
-                    anim = new TranslateAnimation3D(new Vector3(0, 0, 0));
-                    anim.setDurationMilliseconds(800);
+                    anim = new TranslateAnimation3D(new Vector3(0, 0.2, 2.5), new Vector3(0, 0, 2.5));
+                    anim.setDurationMilliseconds(animationPeriod);
                     anim.setTransformable3D(mPickedObject);
-                    anim.setInterpolator(new BounceInterpolator());
+                    anim.setInterpolator(new LinearInterpolator());
+                    anim.setRepeatCount(1);
+                    mAnimationGroup.addAnimation(anim);
+
+                    anim = new TranslateAnimation3D(new Vector3(0, 0, 2.5), new Vector3(0, 0, 0));
+                    anim.setDurationMilliseconds(animationPeriod);
+                    anim.setTransformable3D(mPickedObject);
+                    anim.setInterpolator(new LinearInterpolator());
                     anim.setRepeatCount(1);
                     mAnimationGroup.addAnimation(anim);
 

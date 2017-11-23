@@ -1067,7 +1067,7 @@ public class ARCamActivity extends AppCompatActivity implements ARCamContract.Vi
 
     private long lastOperateTime = 0;  //上次操作头盔的时间
     private long curTime = 0;
-    private final long openTimeLimit = 1500;    //再次操作头盔的至少间隔时间
+    private final long openTimeLimit = 2000;    //再次操作头盔的至少间隔时间
     private boolean isPicked = false;
     private void onTrackDetectedCallback(final STMobileFaceAction[] faceActions, final int orientation, final int value,
                                          final float pitch, final float roll, final float yaw,
