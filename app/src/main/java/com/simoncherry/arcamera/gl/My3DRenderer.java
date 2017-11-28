@@ -354,7 +354,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
 
         Log.i("somebodyluo", "moveSelectedObject: mNewObjPos.x = " + mNewObjPos.x + "; mNewObjPos.y = " + mNewObjPos.y);
         mSelectedObject.setX(mNewObjPos.x * 1.3f);
-        mSelectedObject.setY(mNewObjPos.y - 0.1f); //2017-11-21: -0.1f is for ironman_obj 4/5;
+
+        //2017-11-21: -0.1f is for ironman_obj 4/5; aligning to ear
+        //2017-11-21: +0.05f is for ironman_obj 4/5; aligning to jaw
+        mSelectedObject.setY(mNewObjPos.y + 0.05f);
     }
 
     @Override
@@ -398,9 +401,10 @@ public class My3DRenderer extends Renderer implements OnObjectPickedListener, St
                         所以我们试试，不给Z轴运动，而是对模型进行放大、缩小！
                         */
 //                        mContainer.setScale(mScale);
-                        mContainer.setScale(mScale, mScale /** 0.9f*/, mScale);
+                        mContainer.setScale(mScale* 1.0f, mScale * 1.0f, mScale* 1.0f);
                     }
                 }
+
 
                 if (mOrnamentModel.isEnableTransition()) {
 
